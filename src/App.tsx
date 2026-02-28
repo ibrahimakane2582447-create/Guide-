@@ -169,37 +169,37 @@ const WUDU_IMG = 'https://storage.googleapis.com/aistudio-user-content-prod-eu-w
 const PRAYER_IMG = 'https://storage.googleapis.com/aistudio-user-content-prod-eu-west2/2026/02/28/13/05/59/2jfk4bxd32xbnhsbotwnbg-155752067421/image_0.jpeg';
 
 const WUDU_STEPS: Step[] = [
-  { title: 'L\'intention (Niyyah)', description: 'Formuler l\'intention dans son cœur et dire "Bismillah".', imageUrl: WUDU_IMG, crop: { x: 0, y: 0, zoom: 3 } },
-  { title: 'Laver les mains', description: 'Laver les mains jusqu\'aux poignets trois fois, en passant entre les doigts.', imageUrl: WUDU_IMG, crop: { x: 0, y: 0, zoom: 3 } },
-  { title: 'Rincer la bouche', description: 'Prendre de l\'eau avec la main droite et rincer la bouche trois fois.', imageUrl: WUDU_IMG, crop: { x: 50, y: 0, zoom: 3 } },
-  { title: 'Rincer le nez', description: 'Inspirer de l\'eau par le nez et l\'expulser avec la main gauche trois fois.', imageUrl: WUDU_IMG, crop: { x: 100, y: 0, zoom: 3 } },
-  { title: 'Laver le visage', description: 'Laver tout le visage trois fois, du front au menton et d\'une oreille à l\'autre.', imageUrl: WUDU_IMG, crop: { x: 0, y: 50, zoom: 3 } },
-  { title: 'Laver les bras', description: 'Laver les bras jusqu\'aux coudes trois fois, en commençant par le bras droit.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 3 } },
-  { title: 'Essuyer la tête', description: 'Passer les mains mouillées sur la tête, de l\'avant vers l\'arrière puis revenir.', imageUrl: WUDU_IMG, crop: { x: 100, y: 50, zoom: 3 } },
-  { title: 'Essuyer les oreilles', description: 'Essuyer l\'intérieur des oreilles avec les index et l\'extérieur avec les pouces.', imageUrl: WUDU_IMG, crop: { x: 0, y: 100, zoom: 3 } },
-  { title: 'Laver les pieds', description: 'Laver les pieds jusqu\'aux chevilles trois fois, en commençant par le pied droit.', imageUrl: WUDU_IMG, crop: { x: 50, y: 100, zoom: 3 } },
+  { title: 'L\'intention (Niyyah)', description: 'Formuler l\'intention dans son cœur et dire "Bismillah".', imageUrl: WUDU_IMG, crop: { x: 15, y: 15, zoom: 2.5 } },
+  { title: 'Laver les mains', description: 'Laver les mains jusqu\'aux poignets trois fois, en passant entre les doigts.', imageUrl: WUDU_IMG, crop: { x: 15, y: 15, zoom: 2.5 } },
+  { title: 'Rincer la bouche', description: 'Prendre de l\'eau avec la main droite et rincer la bouche trois fois.', imageUrl: WUDU_IMG, crop: { x: 50, y: 15, zoom: 2.5 } },
+  { title: 'Rincer le nez', description: 'Inspirer de l\'eau par le nez et l\'expulser avec la main gauche trois fois.', imageUrl: WUDU_IMG, crop: { x: 85, y: 15, zoom: 2.5 } },
+  { title: 'Laver le visage', description: 'Laver tout le visage trois fois, du front au menton et d\'une oreille à l\'autre.', imageUrl: WUDU_IMG, crop: { x: 15, y: 50, zoom: 2.5 } },
+  { title: 'Laver les bras', description: 'Laver les bras jusqu\'aux coudes trois fois, en commençant par le bras droit.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 2.5 } },
+  { title: 'Essuyer la tête', description: 'Passer les mains mouillées sur la tête, de l\'avant vers l\'arrière puis revenir.', imageUrl: WUDU_IMG, crop: { x: 85, y: 50, zoom: 2.5 } },
+  { title: 'Essuyer les oreilles', description: 'Essuyer l\'intérieur des oreilles avec les index et l\'extérieur avec les pouces.', imageUrl: WUDU_IMG, crop: { x: 15, y: 85, zoom: 2.5 } },
+  { title: 'Laver les pieds', description: 'Laver les pieds jusqu\'aux chevilles trois fois, en commençant par le pied droit.', imageUrl: WUDU_IMG, crop: { x: 50, y: 85, zoom: 2.5 } },
 ];
 
 const GHUSL_STEPS: Step[] = [
-  { title: 'L\'intention', description: 'Avoir l\'intention de se purifier pour Allah.', imageUrl: WUDU_IMG, crop: { x: 0, y: 0, zoom: 3 } },
-  { title: 'Laver les mains', description: 'Laver les mains trois fois.', imageUrl: WUDU_IMG, crop: { x: 0, y: 0, zoom: 3 } },
-  { title: 'Laver les parties privées', description: 'Laver soigneusement les parties privées avec la main gauche.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 3 } },
-  { title: 'Faire le Wudu', description: 'Faire ses ablutions comme pour la prière (on peut laisser les pieds pour la fin).', imageUrl: WUDU_IMG, crop: { x: 50, y: 0, zoom: 3 } },
-  { title: 'Laver la tête', description: 'Verser de l\'eau sur la tête trois fois en frottant bien les racines.', imageUrl: WUDU_IMG, crop: { x: 100, y: 50, zoom: 3 } },
-  { title: 'Laver le corps (Droit)', description: 'Verser de l\'eau sur tout le côté droit du corps.', imageUrl: WUDU_IMG, crop: { x: 0, y: 100, zoom: 3 } },
-  { title: 'Laver le corps (Gauche)', description: 'Verser de l\'eau sur tout le côté gauche du corps.', imageUrl: WUDU_IMG, crop: { x: 0, y: 100, zoom: 3 } },
+  { title: 'L\'intention', description: 'Avoir l\'intention de se purifier pour Allah.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
+  { title: 'Laver les mains', description: 'Laver les mains trois fois.', imageUrl: WUDU_IMG, crop: { x: 15, y: 15, zoom: 2.5 } },
+  { title: 'Laver les parties privées', description: 'Laver soigneusement les parties privées avec la main gauche.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
+  { title: 'Faire le Wudu', description: 'Faire ses ablutions comme pour la prière (on peut laisser les pieds pour la fin).', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
+  { title: 'Laver la tête', description: 'Verser de l\'eau sur la tête trois fois en frottant bien les racines.', imageUrl: WUDU_IMG, crop: { x: 85, y: 50, zoom: 2.5 } },
+  { title: 'Laver le corps (Droit)', description: 'Verser de l\'eau sur tout le côté droit du corps.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
+  { title: 'Laver le corps (Gauche)', description: 'Verser de l\'eau sur tout le côté gauche du corps.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
 ];
 
 const PRAYER_STEPS: Step[] = [
-  { title: 'Takbir Al-Ihram', description: 'Lever les mains aux oreilles et dire "Allahu Akbar".', arabic: 'اللَّهُ أَكْبَرُ', imageUrl: PRAYER_IMG, crop: { x: 0, y: 35, zoom: 4 } },
-  { title: 'Al-Qiyam', description: 'Poser la main droite sur la gauche sur la poitrine. Réciter la Fatiha et une autre sourate.', imageUrl: PRAYER_IMG, crop: { x: 25, y: 35, zoom: 4 } },
-  { title: 'Ruku (Inclinaison)', description: 'S\'incliner le dos droit, mains sur les genoux. Dire 3x "Subhana Rabbiyal Adhim".', arabic: 'سُبْحَانَ رَبِّيَ الْعَظِيمِ', imageUrl: PRAYER_IMG, crop: { x: 50, y: 35, zoom: 4 } },
-  { title: 'I\'tidal (Redressement)', description: 'Se redresser en disant "Sami\' Allahu liman hamidah" puis "Rabbana wa lakal hamd".', arabic: 'سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ', imageUrl: PRAYER_IMG, crop: { x: 75, y: 35, zoom: 4 } },
-  { title: 'Sujud (Prosternation)', description: 'Se prosterner au sol (front, nez, mains, genoux, pieds). Dire 3x "Subhana Rabbiyal A\'la".', arabic: 'سُبْحَانَ رَبِّيَ الْأَعْلَى', imageUrl: PRAYER_IMG, crop: { x: 100, y: 35, zoom: 4 } },
-  { title: 'Jalsa (Assise)', description: 'S\'asseoir entre les deux prosternations. Dire "Rabbighfir li".', arabic: 'رَبِّ اغْفِرْ لِي', imageUrl: PRAYER_IMG, crop: { x: 0, y: 60, zoom: 4 } },
-  { title: 'Second Sujud', description: 'Effectuer une deuxième prosternation identique à la première.', imageUrl: PRAYER_IMG, crop: { x: 25, y: 60, zoom: 4 } },
-  { title: 'Tashahhud', description: 'S\'asseoir pour le témoignage de foi final.', arabic: 'التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ...', imageUrl: PRAYER_IMG, crop: { x: 50, y: 60, zoom: 4 } },
-  { title: 'Taslim (Salutation)', description: 'Tourner la tête à droite puis à gauche en disant "Assalamu alaykum wa rahmatullah".', arabic: 'السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ', imageUrl: PRAYER_IMG, crop: { x: 87, y: 60, zoom: 4 } },
+  { title: 'Takbir Al-Ihram', description: 'Lever les mains aux oreilles et dire "Allahu Akbar".', arabic: 'اللَّهُ أَكْبَرُ', imageUrl: PRAYER_IMG, crop: { x: 5, y: 35, zoom: 3.5 } },
+  { title: 'Al-Qiyam', description: 'Poser la main droite sur la gauche sur la poitrine. Réciter la Fatiha et une autre sourate.', imageUrl: PRAYER_IMG, crop: { x: 25, y: 35, zoom: 3.5 } },
+  { title: 'Ruku (Inclinaison)', description: 'S\'incliner le dos droit, mains sur les genoux. Dire 3x "Subhana Rabbiyal Adhim".', arabic: 'سُبْحَانَ رَبِّيَ الْعَظِيمِ', imageUrl: PRAYER_IMG, crop: { x: 50, y: 35, zoom: 3.5 } },
+  { title: 'I\'tidal (Redressement)', description: 'Se redresser en disant "Sami\' Allahu liman hamidah" puis "Rabbana wa lakal hamd".', arabic: 'سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ', imageUrl: PRAYER_IMG, crop: { x: 75, y: 35, zoom: 3.5 } },
+  { title: 'Sujud (Prosternation)', description: 'Se prosterner au sol (front, nez, mains, genoux, pieds). Dire 3x "Subhana Rabbiyal A\'la".', arabic: 'سُبْحَانَ رَبِّيَ الْأَعْلَى', imageUrl: PRAYER_IMG, crop: { x: 95, y: 35, zoom: 3.5 } },
+  { title: 'Jalsa (Assise)', description: 'S\'asseoir entre les deux prosternations. Dire "Rabbighfir li".', arabic: 'رَبِّ اغْفِرْ لِي', imageUrl: PRAYER_IMG, crop: { x: 5, y: 65, zoom: 3.5 } },
+  { title: 'Second Sujud', description: 'Effectuer une deuxième prosternation identique à la première.', imageUrl: PRAYER_IMG, crop: { x: 25, y: 65, zoom: 3.5 } },
+  { title: 'Tashahhud', description: 'S\'asseoir pour le témoignage de foi final.', arabic: 'التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ...', imageUrl: PRAYER_IMG, crop: { x: 50, y: 65, zoom: 3.5 } },
+  { title: 'Taslim (Salutation)', description: 'Tourner la tête à droite puis à gauche en disant "Assalamu alaykum wa rahmatullah".', arabic: 'السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ', imageUrl: PRAYER_IMG, crop: { x: 85, y: 65, zoom: 3.5 } },
 ];
 
 // --- Components ---
@@ -209,15 +209,14 @@ const CroppedImage = ({ src, crop, onClick }: { src: string, crop?: { x: number,
     return <img src={src} className="w-full h-56 object-cover cursor-pointer" onClick={onClick} referrerPolicy="no-referrer" />;
   }
   return (
-    <div className="w-full h-56 overflow-hidden relative bg-stone-100 cursor-pointer" onClick={onClick}>
+    <div className="w-full h-56 overflow-hidden relative bg-stone-100 cursor-pointer flex items-center justify-center" onClick={onClick}>
       <img 
         src={src} 
         alt="Demonstration"
-        className="absolute max-w-none"
+        className="w-full h-full object-cover transition-transform duration-300"
         style={{
-          width: `${crop.zoom * 100}%`,
-          left: `${-crop.x * (crop.zoom - 1)}%`,
-          top: `${-crop.y * (crop.zoom - 1)}%`,
+          transform: `scale(${crop.zoom})`,
+          transformOrigin: `${crop.x}% ${crop.y}%`
         }}
         referrerPolicy="no-referrer"
       />

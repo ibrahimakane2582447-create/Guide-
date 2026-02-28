@@ -204,12 +204,12 @@ const PRAYER_STEPS: Step[] = [
 
 // --- Components ---
 
-const CroppedImage = ({ src, crop }: { src: string, crop?: { x: number, y: number, zoom: number } }) => {
+const CroppedImage = ({ src, crop, onClick }: { src: string, crop?: { x: number, y: number, zoom: number }, onClick?: () => void }) => {
   if (!crop) {
-    return <img src={src} className="w-full h-56 object-cover" referrerPolicy="no-referrer" />;
+    return <img src={src} className="w-full h-56 object-cover cursor-pointer" onClick={onClick} referrerPolicy="no-referrer" />;
   }
   return (
-    <div className="w-full h-56 overflow-hidden relative bg-stone-100">
+    <div className="w-full h-56 overflow-hidden relative bg-stone-100 cursor-pointer" onClick={onClick}>
       <img 
         src={src} 
         alt="Demonstration"
@@ -239,6 +239,7 @@ export default function App() {
   const [view, setView] = useState<'welcome' | 'home' | 'ablutions' | 'prayer' | 'douas' | 'help'>('welcome');
   const [ablutionType, setAblutionType] = useState<'wudu' | 'ghusl'>('wudu');
   const [douaFilter, setDouaFilter] = useState<'all' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes'>('all');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const openWhatsApp = (number: string, name: string) => {
     const message = encodeURIComponent(`Assalamou Alaykoum Oustaz ${name}, j'ai besoin d'aide concernant ma pratique religieuse.`);
@@ -389,7 +390,7 @@ export default function App() {
 
               {(ablutionType === 'wudu' ? WUDU_STEPS : GHUSL_STEPS).map((step, idx) => (
                 <div key={idx} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100">
-                  <CroppedImage src={step.imageUrl} crop={step.crop} />
+                  <CroppedImage src={step.imageUrl} crop={step.crop} onClick={() => setSelectedImage(step.imageUrl)} />
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{idx + 1}</span>
@@ -416,7 +417,7 @@ export default function App() {
 
               {PRAYER_STEPS.map((step, idx) => (
                 <div key={idx} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100">
-                  <CroppedImage src={step.imageUrl} crop={step.crop} />
+                  <CroppedImage src={step.imageUrl} crop={step.crop} onClick={() => setSelectedImage(step.imageUrl)} />
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{idx + 1}</span>
@@ -559,6 +560,37 @@ export default function App() {
           <span className="text-[10px] font-bold uppercase">Aide</span>
         </button>
       </nav>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-2"
+            onClick={() => setSelectedImage(null)}
+          >
+            <div className="relative w-full h-full flex items-center justify-center overflow-auto">
+              <img 
+                src={selectedImage} 
+                alt="Zoomed Demonstration" 
+                className="max-w-none w-full object-contain"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <button 
+              className="absolute top-4 right-4 text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm p-2 rounded-full transition-colors"
+              onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
+            >
+              Fermer
+            </button>
+            <div className="absolute bottom-8 left-0 right-0 text-center text-white/50 text-sm pointer-events-none">
+              Pincez pour zoomer
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

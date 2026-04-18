@@ -12,7 +12,8 @@ import {
   Phone, 
   MessageCircle,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  Quote
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -429,8 +430,8 @@ const Card = ({ children, onClick, className = "" }: { children: React.ReactNode
 );
 
 export default function App() {
-  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'help'>('welcome');
-  const [douaFilter, setDouaFilter] = useState<'all' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport' | 'hadith'>('all');
+  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'help'>('welcome');
+  const [douaFilter, setDouaFilter] = useState<'all' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport'>('all');
   const [welcomeQuote, setWelcomeQuote] = useState(WELCOME_QUOTES[0]);
 
   useEffect(() => {
@@ -450,7 +451,11 @@ export default function App() {
 
   if (view === 'welcome') {
     return (
-      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6 text-center">
+      <div 
+        className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6 text-center"
+        onContextMenu={(e) => e.preventDefault()}
+        onCopy={(e) => e.preventDefault()}
+      >
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -479,7 +484,11 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-24">
+    <div 
+      className="min-h-screen bg-stone-50 pb-24"
+      onContextMenu={(e) => e.preventDefault()}
+      onCopy={(e) => e.preventDefault()}
+    >
       {/* Header */}
       <header className="bg-white border-bottom border-stone-100 px-6 py-4 sticky top-0 z-10 flex items-center justify-between">
         {view !== 'home' ? (
@@ -492,6 +501,7 @@ export default function App() {
         <h2 className="text-lg font-bold text-stone-800">
           {view === 'home' && "Guide Muslim"}
           {view === 'douas' && "Douas & Invocations"}
+          {view === 'hadiths' && "Hadiths & Sagesses"}
           {view === 'help' && "Besoin d'aide"}
         </h2>
         <div className="w-10" />
@@ -518,6 +528,17 @@ export default function App() {
                 <ChevronRight className="text-stone-300 w-5 h-5" />
               </Card>
 
+              <Card onClick={() => setView('hadiths')} className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                  <Quote className="text-blue-600 w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-stone-800">Hadiths & Sagesses</h3>
+                  <p className="text-sm text-stone-500">Trésors prophétiques</p>
+                </div>
+                <ChevronRight className="text-stone-300 w-5 h-5" />
+              </Card>
+
               <Card onClick={() => setView('help')} className="flex items-center gap-4 border-emerald-200 bg-emerald-50/30">
                 <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
                   <HandHelping className="text-emerald-700 w-6 h-6" />
@@ -539,7 +560,7 @@ export default function App() {
               className="space-y-4"
             >
               <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                {['all', 'daily', 'protection', 'invocation', 'lieux', 'transport', 'etudes', 'hadith'].map((f) => (
+                {['all', 'daily', 'protection', 'invocation', 'lieux', 'transport', 'etudes'].map((f) => (
                   <button
                     key={f}
                     onClick={() => setDouaFilter(f as any)}
@@ -547,12 +568,12 @@ export default function App() {
                       douaFilter === f ? 'bg-amber-600 text-white shadow-md' : 'bg-white text-stone-500 border border-stone-100'
                     }`}
                   >
-                    {f === 'all' ? 'Tous' : f === 'lieux' ? 'Lieux' : f === 'etudes' ? 'Études & Examens' : f === 'hadith' ? 'Hadiths & Sagesses' : f === 'transport' ? 'Véhicules & Transport' : f.charAt(0).toUpperCase() + f.slice(1)}
+                    {f === 'all' ? 'Tous' : f === 'lieux' ? 'Lieux' : f === 'etudes' ? 'Études & Examens' : f === 'transport' ? 'Véhicules & Transport' : f.charAt(0).toUpperCase() + f.slice(1)}
                   </button>
                 ))}
               </div>
 
-              {DOUAS.filter(d => douaFilter === 'all' || d.category === douaFilter).map((doua) => (
+              {DOUAS.filter(d => d.category !== 'hadith' && (douaFilter === 'all' || d.category === douaFilter)).map((doua) => (
                 <div key={doua.id} className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="font-bold text-stone-800">{doua.title}</h3>
@@ -583,6 +604,50 @@ export default function App() {
                       <div className="pt-3 mt-4 border-t border-stone-50">
                         <p className="text-[11px] font-medium text-stone-400 uppercase tracking-wider text-right">
                           {doua.reporter}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
+
+          {view === 'hadiths' && (
+            <motion.div 
+              key="hadiths"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-4"
+            >
+              {DOUAS.filter(d => d.category === 'hadith').map((hadith) => (
+                <div key={hadith.id} className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="font-bold text-stone-800">{hadith.title}</h3>
+                    <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+                      Hadith
+                    </span>
+                  </div>
+                  <p className="arabic-text text-2xl text-stone-900 mb-4 text-right leading-loose">{hadith.arabic}</p>
+                  <div className="h-px bg-stone-100 mb-4" />
+                  
+                  <div className="space-y-3">
+                    <div className="flex gap-2 items-start">
+                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded uppercase mt-0.5">FR</span>
+                      <p className="text-stone-600 text-sm italic leading-relaxed flex-1">"{hadith.french}"</p>
+                    </div>
+                    
+                    {hadith.wolof && (
+                      <div className="flex gap-2 items-start pt-1">
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase mt-0.5">WO</span>
+                        <p className="text-stone-600 text-sm italic leading-relaxed flex-1 text-emerald-900">"{hadith.wolof}"</p>
+                      </div>
+                    )}
+
+                    {hadith.reporter && (
+                      <div className="pt-3 mt-4 border-t border-stone-50">
+                        <p className="text-[11px] font-medium text-stone-400 uppercase tracking-wider text-right">
+                          {hadith.reporter}
                         </p>
                       </div>
                     )}
@@ -659,6 +724,10 @@ export default function App() {
         <button onClick={() => setView('douas')} className={`flex flex-col items-center gap-1 ${view === 'douas' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <ShieldCheck className="w-6 h-6" />
           <span className="text-[10px] font-bold uppercase">Douas</span>
+        </button>
+        <button onClick={() => setView('hadiths')} className={`flex flex-col items-center gap-1 ${view === 'hadiths' ? 'text-emerald-600' : 'text-stone-400'}`}>
+          <Quote className="w-6 h-6" />
+          <span className="text-[10px] font-bold uppercase">Hadiths</span>
         </button>
         <button onClick={() => setView('help')} className={`flex flex-col items-center gap-1 ${view === 'help' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <HandHelping className="w-6 h-6" />

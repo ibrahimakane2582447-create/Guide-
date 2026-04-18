@@ -3,37 +3,36 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Heart, 
-  Droplets, 
   HandHelping, 
   BookOpen, 
   ShieldCheck, 
   Phone, 
   MessageCircle,
   ChevronRight,
-  ArrowLeft,
-  Info
+  ArrowLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 // --- Types ---
-interface Step {
-  title: string;
-  description: string;
-  arabic?: string;
-  imageUrl: string;
-  crop?: { x: number, y: number, zoom: number };
-}
-
 interface Doua {
   id: string;
   title: string;
   arabic: string;
   french: string;
-  category: 'protection' | 'invocation' | 'daily' | 'lieux' | 'etudes';
+  wolof?: string;
+  category: 'protection' | 'invocation' | 'daily' | 'lieux' | 'etudes' | 'transport' | 'hadith';
 }
+
+const WELCOME_QUOTES = [
+  { text: "Invoquez-Moi, Je vous exaucerai.", source: "Coran 40:60" },
+  { text: "N'est-ce point par l'évocation d'Allah que se tranquillisent les cœurs ?", source: "Coran 13:28" },
+  { text: "Celui qui se souvient de son Seigneur et celui qui ne s'en souvient pas sont comparables au vivant et au mort.", source: "Hadith" },
+  { text: "La patience est une lumière.", source: "Hadith" },
+  { text: "Certes, la prière préserve de la turpitude et du blâmable.", source: "Coran 29:45" }
+];
 
 // --- Data ---
 const DOUAS: Doua[] = [
@@ -162,67 +161,58 @@ const DOUAS: Doua[] = [
     arabic: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي',
     french: "Seigneur, ouvre-moi ma poitrine, et facilite ma mission, et dénoue un nœud en ma langue, afin qu'ils comprennent mes paroles.",
     category: 'etudes'
+  },
+  {
+    id: '19',
+    title: 'Monter dans un véhicule / transport',
+    arabic: 'سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ، وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ',
+    french: "Gloire à Celui qui a mis ceci à notre service alors que nous n'étions pas capables de le dominer. Et c'est vers notre Seigneur que nous retournerons.",
+    wolof: "Ndamm yal nay ñeel kiy dogal lii ci sunu loxo, te ñun munuñuko woon, te ci sunu Boroom lañuy dellu.",
+    category: 'transport'
+  },
+  {
+    id: '20',
+    title: 'Les actes et les intentions (Hadith)',
+    arabic: 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى',
+    french: "Les actes ne valent que par les intentions, et chacun n'a pour lui que ce qu'il a eu l'intention de faire.",
+    wolof: "Jëf yi ci yéene lañuy wéet, te nit ku nekk la mu yéene rekk lay am.",
+    category: 'hadith'
+  },
+  {
+    id: '21',
+    title: 'Le bon comportement (Hadith)',
+    arabic: 'أَكْمَلُ الْمُؤْمِنِينَ إِيمَانًا أَحْسَنُهُمْ خُلُقًا',
+    french: "Les croyants qui ont la foi la plus parfaite sont ceux qui ont le meilleur comportement.",
+    wolof: "Ñi gën a mat ngëm ci jullit ñi, ñoo di ñi gën a rafet jikkk.",
+    category: 'hadith'
+  },
+  {
+    id: '22',
+    title: 'Le sourire comme aumône (Hadith)',
+    arabic: 'تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ',
+    french: "Ton sourire face à ton frère est une aumône.",
+    wolof: "Ree ci kanamu sa mbokk sadax la.",
+    category: 'hadith'
+  },
+  {
+    id: '23',
+    title: 'Parler en bien ou se taire (Hadith)',
+    arabic: 'مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ',
+    french: "Que celui qui croit en Allah et au Jour dernier dise du bien ou qu'il se taise.",
+    wolof: "Kuy gëm Yallah ak bésub mujj ba, na wax lu baax mba mu noppi.",
+    category: 'hadith'
+  },
+  {
+    id: '24',
+    title: 'La propreté et la purification (Hadith)',
+    arabic: 'الطُّهُورُ شَطْرُ الإِيمَانِ',
+    french: "La purification est la moitié de la foi.",
+    wolof: "Set (lab) dafa set wecc ci ngëm.",
+    category: 'hadith'
   }
-];
-
-const WUDU_IMG = 'https://storage.googleapis.com/aistudio-user-content-prod-eu-west2/2026/02/28/13/05/59/2jfk4bxd32xbnhsbotwnbg-155752067421/image_1.jpeg';
-const PRAYER_IMG = 'https://storage.googleapis.com/aistudio-user-content-prod-eu-west2/2026/02/28/13/05/59/2jfk4bxd32xbnhsbotwnbg-155752067421/image_0.jpeg';
-
-const WUDU_STEPS: Step[] = [
-  { title: 'L\'intention (Niyyah)', description: 'Formuler l\'intention dans son cœur et dire "Bismillah".', imageUrl: WUDU_IMG, crop: { x: 15, y: 15, zoom: 2.5 } },
-  { title: 'Laver les mains', description: 'Laver les mains jusqu\'aux poignets trois fois, en passant entre les doigts.', imageUrl: WUDU_IMG, crop: { x: 15, y: 15, zoom: 2.5 } },
-  { title: 'Rincer la bouche', description: 'Prendre de l\'eau avec la main droite et rincer la bouche trois fois.', imageUrl: WUDU_IMG, crop: { x: 50, y: 15, zoom: 2.5 } },
-  { title: 'Rincer le nez', description: 'Inspirer de l\'eau par le nez et l\'expulser avec la main gauche trois fois.', imageUrl: WUDU_IMG, crop: { x: 85, y: 15, zoom: 2.5 } },
-  { title: 'Laver le visage', description: 'Laver tout le visage trois fois, du front au menton et d\'une oreille à l\'autre.', imageUrl: WUDU_IMG, crop: { x: 15, y: 50, zoom: 2.5 } },
-  { title: 'Laver les bras', description: 'Laver les bras jusqu\'aux coudes trois fois, en commençant par le bras droit.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 2.5 } },
-  { title: 'Essuyer la tête', description: 'Passer les mains mouillées sur la tête, de l\'avant vers l\'arrière puis revenir.', imageUrl: WUDU_IMG, crop: { x: 85, y: 50, zoom: 2.5 } },
-  { title: 'Essuyer les oreilles', description: 'Essuyer l\'intérieur des oreilles avec les index et l\'extérieur avec les pouces.', imageUrl: WUDU_IMG, crop: { x: 15, y: 85, zoom: 2.5 } },
-  { title: 'Laver les pieds', description: 'Laver les pieds jusqu\'aux chevilles trois fois, en commençant par le pied droit.', imageUrl: WUDU_IMG, crop: { x: 50, y: 85, zoom: 2.5 } },
-];
-
-const GHUSL_STEPS: Step[] = [
-  { title: 'L\'intention', description: 'Avoir l\'intention de se purifier pour Allah.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
-  { title: 'Laver les mains', description: 'Laver les mains trois fois.', imageUrl: WUDU_IMG, crop: { x: 15, y: 15, zoom: 2.5 } },
-  { title: 'Laver les parties privées', description: 'Laver soigneusement les parties privées avec la main gauche.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
-  { title: 'Faire le Wudu', description: 'Faire ses ablutions comme pour la prière (on peut laisser les pieds pour la fin).', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
-  { title: 'Laver la tête', description: 'Verser de l\'eau sur la tête trois fois en frottant bien les racines.', imageUrl: WUDU_IMG, crop: { x: 85, y: 50, zoom: 2.5 } },
-  { title: 'Laver le corps (Droit)', description: 'Verser de l\'eau sur tout le côté droit du corps.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
-  { title: 'Laver le corps (Gauche)', description: 'Verser de l\'eau sur tout le côté gauche du corps.', imageUrl: WUDU_IMG, crop: { x: 50, y: 50, zoom: 1 } },
-];
-
-const PRAYER_STEPS: Step[] = [
-  { title: 'Takbir Al-Ihram', description: 'Lever les mains aux oreilles et dire "Allahu Akbar".', arabic: 'اللَّهُ أَكْبَرُ', imageUrl: PRAYER_IMG, crop: { x: 5, y: 35, zoom: 3.5 } },
-  { title: 'Al-Qiyam', description: 'Poser la main droite sur la gauche sur la poitrine. Réciter la Fatiha et une autre sourate.', imageUrl: PRAYER_IMG, crop: { x: 25, y: 35, zoom: 3.5 } },
-  { title: 'Ruku (Inclinaison)', description: 'S\'incliner le dos droit, mains sur les genoux. Dire 3x "Subhana Rabbiyal Adhim".', arabic: 'سُبْحَانَ رَبِّيَ الْعَظِيمِ', imageUrl: PRAYER_IMG, crop: { x: 50, y: 35, zoom: 3.5 } },
-  { title: 'I\'tidal (Redressement)', description: 'Se redresser en disant "Sami\' Allahu liman hamidah" puis "Rabbana wa lakal hamd".', arabic: 'سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ', imageUrl: PRAYER_IMG, crop: { x: 75, y: 35, zoom: 3.5 } },
-  { title: 'Sujud (Prosternation)', description: 'Se prosterner au sol (front, nez, mains, genoux, pieds). Dire 3x "Subhana Rabbiyal A\'la".', arabic: 'سُبْحَانَ رَبِّيَ الْأَعْلَى', imageUrl: PRAYER_IMG, crop: { x: 95, y: 35, zoom: 3.5 } },
-  { title: 'Jalsa (Assise)', description: 'S\'asseoir entre les deux prosternations. Dire "Rabbighfir li".', arabic: 'رَبِّ اغْفِرْ لِي', imageUrl: PRAYER_IMG, crop: { x: 5, y: 65, zoom: 3.5 } },
-  { title: 'Second Sujud', description: 'Effectuer une deuxième prosternation identique à la première.', imageUrl: PRAYER_IMG, crop: { x: 25, y: 65, zoom: 3.5 } },
-  { title: 'Tashahhud', description: 'S\'asseoir pour le témoignage de foi final.', arabic: 'التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ...', imageUrl: PRAYER_IMG, crop: { x: 50, y: 65, zoom: 3.5 } },
-  { title: 'Taslim (Salutation)', description: 'Tourner la tête à droite puis à gauche en disant "Assalamu alaykum wa rahmatullah".', arabic: 'السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ', imageUrl: PRAYER_IMG, crop: { x: 85, y: 65, zoom: 3.5 } },
 ];
 
 // --- Components ---
-
-const CroppedImage = ({ src, crop, onClick }: { src: string, crop?: { x: number, y: number, zoom: number }, onClick?: () => void }) => {
-  if (!crop) {
-    return <img src={src} className="w-full h-56 object-cover cursor-pointer" onClick={onClick} referrerPolicy="no-referrer" />;
-  }
-  return (
-    <div className="w-full h-56 overflow-hidden relative bg-stone-100 cursor-pointer flex items-center justify-center" onClick={onClick}>
-      <img 
-        src={src} 
-        alt="Demonstration"
-        className="w-full h-full object-cover transition-transform duration-300"
-        style={{
-          transform: `scale(${crop.zoom})`,
-          transformOrigin: `${crop.x}% ${crop.y}%`
-        }}
-        referrerPolicy="no-referrer"
-      />
-    </div>
-  );
-};
 
 const Card = ({ children, onClick, className = "" }: { children: React.ReactNode, onClick?: () => void, className?: string }) => (
   <motion.div 
@@ -235,10 +225,15 @@ const Card = ({ children, onClick, className = "" }: { children: React.ReactNode
 );
 
 export default function App() {
-  const [view, setView] = useState<'welcome' | 'home' | 'ablutions' | 'prayer' | 'douas' | 'help'>('welcome');
-  const [ablutionType, setAblutionType] = useState<'wudu' | 'ghusl'>('wudu');
-  const [douaFilter, setDouaFilter] = useState<'all' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes'>('all');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'help'>('welcome');
+  const [douaFilter, setDouaFilter] = useState<'all' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport' | 'hadith'>('all');
+  const [welcomeQuote, setWelcomeQuote] = useState(WELCOME_QUOTES[0]);
+
+  useEffect(() => {
+    // Select a random quote on component mount
+    const randomIndex = Math.floor(Math.random() * WELCOME_QUOTES.length);
+    setWelcomeQuote(WELCOME_QUOTES[randomIndex]);
+  }, []);
 
   const openWhatsApp = (number: string, name: string) => {
     const message = encodeURIComponent(`Assalamou Alaykoum Oustaz ${name}, j'ai besoin d'aide concernant ma pratique religieuse.`);
@@ -261,12 +256,12 @@ export default function App() {
             <Heart className="text-white w-12 h-12" />
           </div>
           <h1 className="text-3xl font-bold text-stone-900 mb-4">Bienvenue sur Al-Ihsan</h1>
-          <p className="text-stone-600 mb-10 leading-relaxed">
-            "Certes, la prière préserve de la turpitude et du blâmable." <br/>
-            <span className="italic text-sm opacity-75">— Coran 29:45</span>
+          <p className="text-stone-600 mb-10 leading-relaxed min-h-[5rem]">
+            "{welcomeQuote.text}" <br/>
+            <span className="italic text-sm opacity-75">— {welcomeQuote.source}</span>
           </p>
           <p className="text-stone-500 mb-12">
-            Apprenez les bases de votre foi avec sérénité et précision.
+            Votre recueil quotidien de douas et d'invocations pour chaque instant de la vie.
           </p>
           <button 
             onClick={() => setView('home')}
@@ -292,8 +287,6 @@ export default function App() {
         )}
         <h2 className="text-lg font-bold text-stone-800">
           {view === 'home' && "Guide Muslim"}
-          {view === 'ablutions' && "Ablutions"}
-          {view === 'prayer' && "La Prière"}
           {view === 'douas' && "Douas & Invocations"}
           {view === 'help' && "Besoin d'aide"}
         </h2>
@@ -310,28 +303,6 @@ export default function App() {
               exit={{ opacity: 0, x: 20 }}
               className="grid gap-4"
             >
-              <Card onClick={() => setView('ablutions')} className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                  <Droplets className="text-blue-600 w-6 h-6" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-stone-800">Ablutions</h3>
-                  <p className="text-sm text-stone-500">Wudu & Grandes Ablutions</p>
-                </div>
-                <ChevronRight className="text-stone-300 w-5 h-5" />
-              </Card>
-
-              <Card onClick={() => setView('prayer')} className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
-                  <BookOpen className="text-emerald-600 w-6 h-6" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-stone-800">La Prière</h3>
-                  <p className="text-sm text-stone-500">Guide étape par étape</p>
-                </div>
-                <ChevronRight className="text-stone-300 w-5 h-5" />
-              </Card>
-
               <Card onClick={() => setView('douas')} className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
                   <ShieldCheck className="text-amber-600 w-6 h-6" />
@@ -356,97 +327,6 @@ export default function App() {
             </motion.div>
           )}
 
-          {view === 'ablutions' && (
-            <motion.div 
-              key="ablutions"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-6"
-            >
-              <div className="flex bg-stone-100 p-1 rounded-xl mb-6">
-                <button 
-                  onClick={() => setAblutionType('wudu')}
-                  className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${ablutionType === 'wudu' ? 'bg-white text-blue-600 shadow-sm' : 'text-stone-500'}`}
-                >
-                  Wudu (Petit)
-                </button>
-                <button 
-                  onClick={() => setAblutionType('ghusl')}
-                  className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${ablutionType === 'ghusl' ? 'bg-white text-blue-600 shadow-sm' : 'text-stone-500'}`}
-                >
-                  Ghusl (Grand)
-                </button>
-              </div>
-
-              <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 flex gap-3">
-                <Info className="w-5 h-5 text-blue-600 shrink-0" />
-                <p className="text-sm text-blue-800">
-                  {ablutionType === 'wudu' 
-                    ? "Le Wudu est nécessaire pour chaque prière si vous l'avez perdu." 
-                    : "Le Ghusl est obligatoire après un état d'impureté majeure."}
-                </p>
-              </div>
-
-              {(ablutionType === 'wudu' ? WUDU_STEPS : GHUSL_STEPS).map((step, idx) => (
-                <div key={idx} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100">
-                  <CroppedImage src={step.imageUrl} crop={step.crop} onClick={() => setSelectedImage(step.imageUrl)} />
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{idx + 1}</span>
-                      <h3 className="font-bold text-stone-800">{step.title}</h3>
-                    </div>
-                    <p className="text-stone-600 text-sm leading-relaxed">{step.description}</p>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          )}
-
-          {view === 'prayer' && (
-            <motion.div 
-              key="prayer"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-8"
-            >
-              <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex gap-3">
-                <Info className="w-5 h-5 text-emerald-600 shrink-0" />
-                <p className="text-sm text-emerald-800">Suivez ces étapes pour accomplir une unité de prière (Rakat) et la conclusion.</p>
-              </div>
-
-              {PRAYER_STEPS.map((step, idx) => (
-                <div key={idx} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100">
-                  <CroppedImage src={step.imageUrl} crop={step.crop} onClick={() => setSelectedImage(step.imageUrl)} />
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{idx + 1}</span>
-                      <h3 className="font-bold text-stone-800">{step.title}</h3>
-                    </div>
-                    {step.arabic && (
-                      <p className="arabic-text text-2xl text-emerald-700 mb-3 text-right leading-loose">{step.arabic}</p>
-                    )}
-                    <p className="text-stone-600 text-sm leading-relaxed">{step.description}</p>
-                  </div>
-                </div>
-              ))}
-
-              <div className="pt-6">
-                <h3 className="text-lg font-bold text-stone-800 mb-4 flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-amber-600" />
-                  Invocations après la prière
-                </h3>
-                <div className="space-y-4">
-                  {DOUAS.filter(d => d.title.includes('Après la prière')).map((doua) => (
-                    <div key={doua.id} className="bg-white p-5 rounded-xl border border-stone-100 shadow-sm">
-                      <p className="arabic-text text-xl text-stone-900 mb-2 text-right">{doua.arabic}</p>
-                      <p className="text-stone-500 text-xs italic">{doua.french}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
           {view === 'douas' && (
             <motion.div 
               key="douas"
@@ -455,7 +335,7 @@ export default function App() {
               className="space-y-4"
             >
               <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                {['all', 'daily', 'protection', 'invocation', 'lieux', 'etudes'].map((f) => (
+                {['all', 'daily', 'protection', 'invocation', 'lieux', 'transport', 'etudes', 'hadith'].map((f) => (
                   <button
                     key={f}
                     onClick={() => setDouaFilter(f as any)}
@@ -463,7 +343,7 @@ export default function App() {
                       douaFilter === f ? 'bg-amber-600 text-white shadow-md' : 'bg-white text-stone-500 border border-stone-100'
                     }`}
                   >
-                    {f === 'all' ? 'Tous' : f === 'lieux' ? 'Lieux' : f === 'etudes' ? 'Études & Examens' : f.charAt(0).toUpperCase() + f.slice(1)}
+                    {f === 'all' ? 'Tous' : f === 'lieux' ? 'Lieux' : f === 'etudes' ? 'Études & Examens' : f === 'hadith' ? 'Hadiths & Sagesses' : f === 'transport' ? 'Véhicules & Transport' : f.charAt(0).toUpperCase() + f.slice(1)}
                   </button>
                 ))}
               </div>
@@ -473,14 +353,28 @@ export default function App() {
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="font-bold text-stone-800">{doua.title}</h3>
                     <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full ${
-                      doua.category === 'protection' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
+                      doua.category === 'protection' ? 'bg-red-50 text-red-600' : 
+                      doua.category === 'hadith' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
                     }`}>
                       {doua.category}
                     </span>
                   </div>
                   <p className="arabic-text text-2xl text-stone-900 mb-4 text-right leading-loose">{doua.arabic}</p>
                   <div className="h-px bg-stone-100 mb-4" />
-                  <p className="text-stone-600 text-sm italic leading-relaxed">"{doua.french}"</p>
+                  
+                  <div className="space-y-3">
+                    <div className="flex gap-2 items-start">
+                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded uppercase mt-0.5">FR</span>
+                      <p className="text-stone-600 text-sm italic leading-relaxed flex-1">"{doua.french}"</p>
+                    </div>
+                    
+                    {doua.wolof && (
+                      <div className="flex gap-2 items-start pt-1">
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase mt-0.5">WO</span>
+                        <p className="text-stone-600 text-sm italic leading-relaxed flex-1 text-emerald-900">"{doua.wolof}"</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </motion.div>
@@ -559,37 +453,6 @@ export default function App() {
           <span className="text-[10px] font-bold uppercase">Aide</span>
         </button>
       </nav>
-
-      {/* Lightbox */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-2"
-            onClick={() => setSelectedImage(null)}
-          >
-            <div className="relative w-full h-full flex items-center justify-center overflow-auto">
-              <img 
-                src={selectedImage} 
-                alt="Zoomed Demonstration" 
-                className="max-w-none w-full object-contain"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <button 
-              className="absolute top-4 right-4 text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm p-2 rounded-full transition-colors"
-              onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-            >
-              Fermer
-            </button>
-            <div className="absolute bottom-8 left-0 right-0 text-center text-white/50 text-sm pointer-events-none">
-              Pincez pour zoomer
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

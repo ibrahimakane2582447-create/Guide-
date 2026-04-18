@@ -23,6 +23,7 @@ interface Doua {
   arabic: string;
   french: string;
   wolof?: string;
+  reporter?: string;
   category: 'protection' | 'invocation' | 'daily' | 'lieux' | 'etudes' | 'transport' | 'hadith';
 }
 
@@ -41,6 +42,7 @@ const DOUAS: Doua[] = [
     title: 'Invocation du matin',
     arabic: 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ',
     french: "Nous sommes au matin et la royauté appartient à Allah, Louange à Allah.",
+    wolof: "Yewwu nanu te nguur gi yépp Yàlla ko moom, cant yépp ñeel na Yàlla.",
     category: 'daily'
   },
   {
@@ -48,6 +50,7 @@ const DOUAS: Doua[] = [
     title: 'Protection contre le mal',
     arabic: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ',
     french: "Au nom d'Allah, tel qu'en compagnie de Son Nom rien ne peut nuire sur terre ni au ciel.",
+    wolof: "Ci turu Yàlla mi nga xam ne ludul mbir ci kaw suuf walla ci asamaan munu la lor ci ànd ak turam.",
     category: 'protection'
   },
   {
@@ -55,6 +58,7 @@ const DOUAS: Doua[] = [
     title: 'Avant de dormir',
     arabic: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
     french: "En Ton nom, ô Allah, je meurs et je vis.",
+    wolof: "Ci sa tur yaw Yàlla, laay dee te ci sa tur laay dund.",
     category: 'daily'
   },
   {
@@ -62,6 +66,7 @@ const DOUAS: Doua[] = [
     title: 'Après la prière (1)',
     arabic: 'أَسْتَغْفِرُ اللَّهَ (ثَلَاثاً) اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ',
     french: "Je demande pardon à Allah (3 fois). Ô Allah ! Tu es la Paix et la paix vient de Toi. Béni sois-Tu, ô Détenteur de la Majesté et de la Générosité.",
+    wolof: "Maa ngiy jéggalu Yàlla (3 yoon). Yaw Yàlla, yaay jàmm te ci yaw la jàmm di jóge. Barkeel nga, yaw mi moom màggal gi ak teddnga gi.",
     category: 'invocation'
   },
   {
@@ -69,6 +74,7 @@ const DOUAS: Doua[] = [
     title: 'Ayat Al-Kursi (Protection)',
     arabic: 'اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...',
     french: "Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par Lui-même...",
+    wolof: "Yàlla ! Amul leneen luñuy jaamu ludul Moom, miy dund tey sax-dàqq...",
     category: 'protection'
   },
   {
@@ -76,6 +82,7 @@ const DOUAS: Doua[] = [
     title: 'Doua pour les parents',
     arabic: 'رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
     french: "Seigneur ! Fais-leur, à tous deux, miséricorde comme ils m'ont élevé tout petit.",
+    wolof: "Sama Boroom ! Yërëm leen ñaar ñépp, ni nu ma yaroowe woon ma nekk xale.",
     category: 'invocation'
   },
   {
@@ -83,6 +90,7 @@ const DOUAS: Doua[] = [
     title: 'Doua pour la subsistance',
     arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا',
     french: "Ô Allah, je Te demande une science utile, une subsistance licite et une œuvre agréée.",
+    wolof: "Yaw Yàlla, maa ngi lay ñaan xam-xam bu njariñ, wërsëg wu sell ak jëf ju nu nangou.",
     category: 'invocation'
   },
   {
@@ -90,6 +98,7 @@ const DOUAS: Doua[] = [
     title: 'Après la prière (2)',
     arabic: 'سُبْحَانَ اللَّهِ (33) الْحَمْدُ لِلَّهِ (33) اللَّهُ أَكْبَرُ (33)',
     french: "Gloire à Allah (33 fois), Louange à Allah (33 fois), Allah est le plus Grand (33 fois).",
+    wolof: "Sell na Yàlla (33), Cant ñeel na Yàlla (33), Yàlla a gëna màgg (33).",
     category: 'invocation'
   },
   {
@@ -97,6 +106,7 @@ const DOUAS: Doua[] = [
     title: 'Entrer à la maison',
     arabic: 'بِسْـمِ اللهِ وَلَجْنـا، وَبِسْـمِ اللهِ خَـرَجْنـا، وَعَلـى رَبِّنـا تَوَكّلْـنا',
     french: "Au nom d'Allah nous entrons, au nom d'Allah nous sortons, et en notre Seigneur nous plaçons notre confiance.",
+    wolof: "Ci turu Yàlla lanu dugg, ci turu Yàlla lanu guenn, te ci sunu Boroom lanu wéeru.",
     category: 'lieux'
   },
   {
@@ -104,6 +114,7 @@ const DOUAS: Doua[] = [
     title: 'Sortir de la maison',
     arabic: 'بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
     french: "Au nom d'Allah, je place ma confiance en Allah. Il n'y a de force ni de puissance qu'en Allah.",
+    wolof: "Ci turu Yàlla, wéeru naa ci Yàlla. Amul kàttan ak doole ludul ci Yàlla.",
     category: 'lieux'
   },
   {
@@ -111,6 +122,7 @@ const DOUAS: Doua[] = [
     title: 'Entrer aux toilettes',
     arabic: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبْثِ وَالْخَبَائِثِ',
     french: "Ô Allah, je cherche refuge auprès de Toi contre les démons mâles et femelles.",
+    wolof: "Yaw Yàlla, maa ngi daw làqu ci yaw, di tàccu seytane yu góor ak yu jigéen yi.",
     category: 'lieux'
   },
   {
@@ -118,6 +130,7 @@ const DOUAS: Doua[] = [
     title: 'Sortir des toilettes',
     arabic: 'غُفْرَانَكَ',
     french: "Je Te demande pardon (Ô Allah).",
+    wolof: "Yàlla, maa ngi lay ñaan nga jéggal ma.",
     category: 'lieux'
   },
   {
@@ -125,6 +138,7 @@ const DOUAS: Doua[] = [
     title: 'Entrer à la mosquée',
     arabic: 'اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ',
     french: "Ô Allah, ouvre-moi les portes de Ta miséricorde.",
+    wolof: "Yaw Yàlla, ubbil ma bunti sa yërmande.",
     category: 'lieux'
   },
   {
@@ -132,6 +146,7 @@ const DOUAS: Doua[] = [
     title: 'Sortir de la mosquée',
     arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ',
     french: "Ô Allah, je Te demande de Ta grâce.",
+    wolof: "Yaw Yàlla, maa ngi lay ñaan ci sa ngënéel.",
     category: 'lieux'
   },
   {
@@ -139,6 +154,7 @@ const DOUAS: Doua[] = [
     title: 'Entrer au marché / boutique',
     arabic: 'لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، يُحيي ويُميت، وهو حي لا يموت، بيده الخير، وهو على كل شيء قدير',
     french: "Il n'y a de divinité digne d'être adorée qu'Allah, Seul, sans associé. À Lui la royauté, à Lui la louange. Il donne la vie et donne la mort. Il est Vivant et ne meurt jamais. Le bien est dans Sa main et Il est Omnipotent.",
+    wolof: "Amul beneen Yàlla budul moom kese, amul kook bokkal. Moom moo moom nguur gi, moo moom cant gi, mooy dundal teyek rey, dund la buy dul dee. Aw yiw ci loxoom la nekk, te Moom ci kaw mbir mu nekk mën na ko.",
     category: 'lieux'
   },
   {
@@ -146,6 +162,7 @@ const DOUAS: Doua[] = [
     title: 'Faciliter une tâche (Examen, Concours)',
     arabic: 'اللَّهُمَّ لاَ سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلاً، وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلاً',
     french: "Ô Allah, il n'y a de chose facile que ce que Tu rends facile, et si Tu le veux, Tu peux rendre la chose difficile facile.",
+    wolof: "Yaw Yàlla, amul luy yomb ludul loo def mu yomb, te yaw booy bëgge luy jafe def ko muy yomb.",
     category: 'etudes'
   },
   {
@@ -153,6 +170,7 @@ const DOUAS: Doua[] = [
     title: 'Pour la science (Élève, Chercheur)',
     arabic: 'رَّبِّ زِدْنِي عِلْمًا',
     french: "Ô mon Seigneur, accroît mes connaissances !",
+    wolof: "Sama Boroom, yokkal ma xam-xam !",
     category: 'etudes'
   },
   {
@@ -160,6 +178,7 @@ const DOUAS: Doua[] = [
     title: 'Avant un examen (Ouvrir la poitrine)',
     arabic: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي',
     french: "Seigneur, ouvre-moi ma poitrine, et facilite ma mission, et dénoue un nœud en ma langue, afin qu'ils comprennent mes paroles.",
+    wolof: "Sama Boroom, léralal ma sama dënn, tey yombalal ma sama mbir, te nga fekki lëng ko ci sama làmmiñ, ndax ñu mën a dégg sama wax.",
     category: 'etudes'
   },
   {
@@ -176,6 +195,7 @@ const DOUAS: Doua[] = [
     arabic: 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى',
     french: "Les actes ne valent que par les intentions, et chacun n'a pour lui que ce qu'il a eu l'intention de faire.",
     wolof: "Jëf yi ci yéene lañuy wéet, te nit ku nekk la mu yéene rekk lay am.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
     category: 'hadith'
   },
   {
@@ -184,6 +204,7 @@ const DOUAS: Doua[] = [
     arabic: 'أَكْمَلُ الْمُؤْمِنِينَ إِيمَانًا أَحْسَنُهُمْ خُلُقًا',
     french: "Les croyants qui ont la foi la plus parfaite sont ceux qui ont le meilleur comportement.",
     wolof: "Ñi gën a mat ngëm ci jullit ñi, ñoo di ñi gën a rafet jikkk.",
+    reporter: "Rapporté par At-Tirmidhi",
     category: 'hadith'
   },
   {
@@ -192,6 +213,7 @@ const DOUAS: Doua[] = [
     arabic: 'تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ',
     french: "Ton sourire face à ton frère est une aumône.",
     wolof: "Ree ci kanamu sa mbokk sadax la.",
+    reporter: "Rapporté par At-Tirmidhi",
     category: 'hadith'
   },
   {
@@ -200,6 +222,7 @@ const DOUAS: Doua[] = [
     arabic: 'مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ',
     french: "Que celui qui croit en Allah et au Jour dernier dise du bien ou qu'il se taise.",
     wolof: "Kuy gëm Yallah ak bésub mujj ba, na wax lu baax mba mu noppi.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
     category: 'hadith'
   },
   {
@@ -208,6 +231,187 @@ const DOUAS: Doua[] = [
     arabic: 'الطُّهُورُ شَطْرُ الإِيمَانِ',
     french: "La purification est la moitié de la foi.",
     wolof: "Set (lab) dafa set wecc ci ngëm.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '25',
+    title: 'La miséricorde (Hadith)',
+    arabic: 'مَنْ لَا يَرْحَمْ لَا يُرْحَمْ',
+    french: "Celui qui ne fait pas miséricorde, on ne lui fera pas miséricorde.",
+    wolof: "Ku yërmuwul (ñàkk yërmande), duñu ko yërëm.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '26',
+    title: 'La religion c\'est le bon conseil (Hadith)',
+    arabic: 'الدِّينُ النَّصِيحَةُ',
+    french: "La religion, c'est le bon conseil (la sincérité).",
+    wolof: "Diine mooy kàddu gu rafet (walla laabiire).",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '27',
+    title: 'L\'amour pour son frère (Hadith)',
+    arabic: 'لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ',
+    french: "Aucun de vous ne sera un véritable croyant tant qu'il n'aimera pas pour son frère ce qu'il aime pour lui-même.",
+    wolof: "Kenn ci yeen dëggalul ngëmam, li feek bëggul ngir mbokkam li mu bëgg ngir boppam.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '28',
+    title: 'Dire la vérité (Hadith)',
+    arabic: 'عَلَيْكُمْ بِالصِّدْقِ، فَإِنَّ الصِّدْقَ يَهْدِي إِلَى الْبِرِّ',
+    french: "Accrochez-vous à la vérité, car la vérité mène à la piété.",
+    wolof: "Dëng-kàddu leen ci dëgg, ndax dëgg dafay jëme ci mbàax (sell).",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '29',
+    title: 'Éviter la colère (Hadith)',
+    arabic: 'لَيْسَ الشَّدِيدُ بِالصُّرَعَةِ، إِنَّمَا الشَّدِيدُ الَّذِي يَمْلِكُ نَفْسَهُ عِنْدَ الْغَضَبِ',
+    french: "Le fort n'est pas celui qui terrasse ses adversaires, le fort est celui qui se maîtrise lorsqu'il est en colère.",
+    wolof: "Ku am doole du kiy daan nit ñi ci bëre, waaye ku am doole mooy kiy téye boppam bu meré.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '30',
+    title: 'L\'importance de la mère (Hadith)',
+    arabic: 'الْجَنَّةُ تَحْتَ أَقْدَامِ الْأُمَّهَاتِ',
+    french: "Le Paradis se trouve sous les pieds des mères.",
+    wolof: "Àjjana mi ngi ci ron tanki ndey yi.",
+    reporter: "Rapporté par Ibn Majah et An-Nasa'i",
+    category: 'hadith'
+  },
+  {
+    id: '31',
+    title: 'L\'aumône et la richesse (Hadith)',
+    arabic: 'مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ',
+    french: "L'aumône ne diminue en rien la richesse.",
+    wolof: "Sadax du wàññi alal mukk.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '32',
+    title: 'Chercher le savoir (Hadith)',
+    arabic: 'طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ',
+    french: "La recherche de la science est une obligation pour chaque musulman.",
+    wolof: "Wut xam-xam farata la ci lu jullit bu nekk.",
+    reporter: "Rapporté par Ibn Majah",
+    category: 'hadith'
+  },
+  {
+    id: '33',
+    title: 'Repentir et pardon (Hadith)',
+    arabic: 'كُلُّ بَنِي آدَمَ خَطَّاءٌ وَخَيْرُ الْخَطَّائِينَ التَّوَّابُونَ',
+    french: "Tous les fils d'Adam commettent des péchés et les meilleurs d'entre eux sont ceux qui se repentent.",
+    wolof: "Doom Aadama yépp ay bàkkaarkat lañu, waaye ñi gën ci bàkkaarkat yi, ñoo di ñiy tuub.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+    id: '34',
+    title: 'S\'éloigner des futilités (Hadith)',
+    arabic: 'مِنْ حُسْنِ إِسْلَامِ الْمَرْءِ تَرْكُهُ مَا لَا يَعْنِيهِ',
+    french: "L'un des bons aspects de l'Islam d'une personne est qu'elle délaisse ce qui ne la regarde pas.",
+    wolof: "Ci baaxug jullitug nit, mooy mu bàyyi li ko yeewul.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+    id: '35',
+    title: 'La douceur (Hadith)',
+    arabic: 'إِنَّ الرِّفْقَ لَا يَكُونُ فِي شَيْءٍ إِلَّا زَانَهُ',
+    french: "La douceur ne se trouve pas dans une chose sans l'embellir.",
+    wolof: "Rafet-jikko du nekk ci lenn ludul daf koy taaral.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '36',
+    title: 'Aider son frère (Hadith)',
+    arabic: 'وَاللَّهُ فِي عَوْنِ الْعَبْدِ مَا كَانَ الْعَبْدُ فِي عَوْنِ أَخِيهِ',
+    french: "Allah vient en aide au serviteur tant que le serviteur vient en aide à son frère.",
+    wolof: "Yàlla mi ngi dimbali jaam bi, la feek jaam bi mi ngi dimbali mbokkam.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '37',
+    title: 'La modération et la santé (Hadith)',
+    arabic: 'مَنْ أَصْبَحَ مِنْكُمْ آمِنًا فِي سِرْبِهِ مُعَافًى فِي جَسَدِهِ... كَأَنَّمَا حِيزَتْ لَهُ الدُّنْيَا',
+    french: "Celui qui se réveille en sécurité parmi les siens et en bonne santé... c'est comme si on lui avait donné le monde.",
+    wolof: "Ku yewwu jàmm ci seen biir, am wërgiyaram... mel na ni ñu jox ko àddina si yépp.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+    id: '38',
+    title: 'Ne pas mépriser le bien (Hadith)',
+    arabic: 'لَا تَحْقِرَنَّ مِنَ الْمَعْرُوفِ شَيْئًا',
+    french: "Ne méprise aucune bonne action, même minime.",
+    wolof: "Bul xeeb lenn ci mbàax (sell).",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '39',
+    title: 'La prière comme lumière (Hadith)',
+    arabic: 'الصَّلَاةُ نُورٌ',
+    french: "La prière est une lumière.",
+    wolof: "Julli, leer la.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '40',
+    title: 'Le bon voisinage (Hadith)',
+    arabic: 'خَيْرُ الْجِيرَانِ عِنْدَ اللَّهِ خَيْرُهُمْ لِجَارِهِ',
+    french: "Le meilleur des voisins auprès d'Allah est celui qui est le meilleur envers son voisin.",
+    wolof: "Yéen ñi gën a baax ci seen dëkkandoo, ñoo di ñi gën ci Yàlla.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+    id: '41',
+    title: 'Pudeur et foi (Hadith)',
+    arabic: 'الْحَيَاءُ شُعْبَةٌ مِنَ الْإِيمَانِ',
+    french: "La pudeur est une branche de la foi.",
+    wolof: "Kersa, cér la ci mbirum ngëm.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '42',
+    title: 'L\'invocation est l\'adoration (Hadith)',
+    arabic: 'الدُّعَاءُ هُوَ الْعِبَادَةُ',
+    french: "L'invocation, c'est l'adoration.",
+    wolof: "Ñaan, mooy jaamu Yàlla dëgg-dëgg.",
+    reporter: "Rapporté par Abou Daoud",
+    category: 'hadith'
+  },
+  {
+    id: '43',
+    title: 'Propager la paix (Hadith)',
+    arabic: 'أَفْشُوا السَّلَامَ بَيْنَكُمْ',
+    french: "Répandez le salut (le Salam) entre vous.",
+    wolof: "Tasaare leen nuyyoo ba (As-Salam) ci seen biir.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '44',
+    title: 'Modestie et élévation (Hadith)',
+    arabic: 'مَنْ تَوَاضَعَ لِلَّهِ رَفَعَهُ اللَّهُ',
+    french: "Celui qui fait preuve d'humilité pour Allah, Allah l'élève.",
+    wolof: "Ku wàññi boppam ngir Yàlla, Yàlla dina ko yékkatí.",
+    reporter: "Rapporté par Muslim",
     category: 'hadith'
   }
 ];
@@ -372,6 +576,14 @@ export default function App() {
                       <div className="flex gap-2 items-start pt-1">
                         <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase mt-0.5">WO</span>
                         <p className="text-stone-600 text-sm italic leading-relaxed flex-1 text-emerald-900">"{doua.wolof}"</p>
+                      </div>
+                    )}
+
+                    {doua.reporter && (
+                      <div className="pt-3 mt-4 border-t border-stone-50">
+                        <p className="text-[11px] font-medium text-stone-400 uppercase tracking-wider text-right">
+                          {doua.reporter}
+                        </p>
                       </div>
                     )}
                   </div>

@@ -13,7 +13,11 @@ import {
   MessageCircle,
   ChevronRight,
   ArrowLeft,
-  Quote
+  Quote,
+  Gift,
+  X,
+  Copy,
+  Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -414,6 +418,60 @@ const DOUAS: Doua[] = [
     wolof: "Ku wàññi boppam ngir Yàlla, Yàlla dina ko yékkatí.",
     reporter: "Rapporté par Muslim",
     category: 'hadith'
+  },
+  {
+    id: '45',
+    title: 'Sagesse de Abou Bakr (Radiyallahu anhu)',
+    arabic: 'احْرِصْ عَلَى الْمَوْتِ، تُوهَبْ لَكَ الْحَيَاةُ',
+    french: "Recherche la mort (en martyr pour Allah), la vie de l'au-delà te sera accordée.",
+    wolof: "Wut woyof ci sa dund ak sa dee, dund gu baax dees na lako may.",
+    reporter: "Parole de Abou Bakr As-Siddiq",
+    category: 'hadith'
+  },
+  {
+    id: '46',
+    title: 'Sagesse de \'Umar ibn Al-Khattab',
+    arabic: 'حَاسِبُوا أَنْفُسَكُمْ قَبْلَ أَنْ تُحَاسَبُوا',
+    french: "Jugez-vous vous-mêmes avant d'être jugés.",
+    wolof: "Xeytamaale leen seen jëfi bopp, balaa ñu leen di xeytamaale ëllëg.",
+    reporter: "Parole de 'Umar ibn Al-Khattab",
+    category: 'hadith'
+  },
+  {
+    id: '47',
+    title: 'Sagesse de \'Uthman ibn \'Affan',
+    arabic: 'هَمُّ الدُّنْيَا ظُلْمَةٌ فِي الْقَلْبِ، وَهَمُّ الْآخِرَةِ نُورٌ فِي الْقَلْبِ',
+    french: "Le souci de ce bas-monde est une obscurité dans le cœur, et le souci de l'au-delà y est une lumière.",
+    wolof: "Xalaat ci àddina leundeum la ci xol, waaye xalaat ci àllaaxira leer la ci xol.",
+    reporter: "Parole de 'Uthman ibn 'Affan",
+    category: 'hadith'
+  },
+  {
+    id: '48',
+    title: 'Sagesse de \'Ali ibn Abi Talib',
+    arabic: 'قِيمَةُ كُلِّ امْرِئٍ مَا يُحْسِنُهُ',
+    french: "La valeur de chaque homme réside dans le bien qu'il sait accomplir.",
+    wolof: "Pajug nit ku nekk ci li mu mën a def lu baax la nekk.",
+    reporter: "Parole de 'Ali ibn Abi Talib",
+    category: 'hadith'
+  },
+  {
+    id: '49',
+    title: 'Sagesse de Ibn Mas\'ud',
+    arabic: 'الْيَقِينُ الْإِيمَانُ كُلُّهُ',
+    french: "La certitude représente la foi tout entière.",
+    wolof: "Kóolute mooy ngëm gi yépp, lëj-lëj amut ci.",
+    reporter: "Parole de 'Abdullah ibn Mas'ud",
+    category: 'hadith'
+  },
+  {
+    id: '50',
+    title: 'Miséricorde entre les croyants (Hadith)',
+    arabic: 'مَثَلُ الْمُؤْمِنِينَ فِي تَوَادِّهِمْ وَتَرَاحُمِهِمْ وَتَعَاطُفِهِمْ مَثَلُ الْجَسَدِ',
+    french: "L'image des croyants dans les liens d'amour, de miséricorde et de compassion qui les unissent, est celle d'un seul corps.",
+    wolof: "Melo jullit ñi ci seen mbëggeel ak seen yërmande ñom ci seen biir mel na ni benn yaram.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
   }
 ];
 
@@ -433,6 +491,8 @@ export default function App() {
   const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'help'>('welcome');
   const [douaFilter, setDouaFilter] = useState<'all' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport'>('all');
   const [welcomeQuote, setWelcomeQuote] = useState(WELCOME_QUOTES[0]);
+  const [donationTarget, setDonationTarget] = useState<{name: string, number: string} | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     // Select a random quote on component mount
@@ -441,7 +501,7 @@ export default function App() {
   }, []);
 
   const openWhatsApp = (number: string, name: string) => {
-    const message = encodeURIComponent(`Assalamou Alaykoum Oustaz ${name}, j'ai besoin d'aide concernant ma pratique religieuse.`);
+    const message = encodeURIComponent(`Assalamou Alaykoum Oustaz ${name}, j'ai besoin d'aide ou de conseils concernant ma pratique religieuse.`);
     window.open(`https://wa.me/${number.replace(/\s+/g, '')}?text=${message}`, '_blank');
   };
 
@@ -671,18 +731,28 @@ export default function App() {
               {/* Oustaz Kane */}
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
                 <h3 className="font-bold text-lg text-stone-800 mb-4">Oustaz Kane</h3>
-                <div className="grid grid-cols-2 gap-3">
+                
+                <div className="flex flex-col gap-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => makeCall('770903109')}
+                      className="flex items-center justify-center gap-2 bg-stone-100 text-stone-700 py-3 rounded-xl font-medium hover:bg-stone-200 transition-colors"
+                    >
+                      <Phone className="w-4 h-4" /> Appeler
+                    </button>
+                    <button 
+                      onClick={() => openWhatsApp('770903109', 'Kane')}
+                      className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" /> Poser question
+                    </button>
+                  </div>
+                  
                   <button 
-                    onClick={() => makeCall('770903109')}
-                    className="flex items-center justify-center gap-2 bg-stone-100 text-stone-700 py-3 rounded-xl font-medium hover:bg-stone-200 transition-colors"
+                    onClick={() => setDonationTarget({ name: 'Oustaz Kane', number: '77 090 31 09' })}
+                    className="flex items-center justify-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 py-3 rounded-xl font-medium hover:bg-amber-100 transition-colors"
                   >
-                    <Phone className="w-4 h-4" /> Appeler
-                  </button>
-                  <button 
-                    onClick={() => openWhatsApp('770903109', 'Kane')}
-                    className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors"
-                  >
-                    <MessageCircle className="w-4 h-4" /> WhatsApp
+                    <Gift className="w-4 h-4" /> Faire un don (Soutien)
                   </button>
                 </div>
               </div>
@@ -690,18 +760,57 @@ export default function App() {
               {/* Oustaz Ciss */}
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
                 <h3 className="font-bold text-lg text-stone-800 mb-4">Oustaz Ciss</h3>
-                <div className="grid grid-cols-2 gap-3">
+                
+                <div className="flex flex-col gap-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => makeCall('+221 76 261 30 15')}
+                      className="flex items-center justify-center gap-2 bg-stone-100 text-stone-700 py-3 rounded-xl font-medium hover:bg-stone-200 transition-colors"
+                    >
+                      <Phone className="w-4 h-4" /> Appeler
+                    </button>
+                    <button 
+                      onClick={() => openWhatsApp('+221 76 261 30 15', 'Ciss')}
+                      className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" /> Poser question
+                    </button>
+                  </div>
+
                   <button 
-                    onClick={() => makeCall('+221 76 261 30 15')}
-                    className="flex items-center justify-center gap-2 bg-stone-100 text-stone-700 py-3 rounded-xl font-medium hover:bg-stone-200 transition-colors"
+                    onClick={() => setDonationTarget({ name: 'Oustaz Ciss', number: '+221 76 261 30 15' })}
+                    className="flex items-center justify-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 py-3 rounded-xl font-medium hover:bg-amber-100 transition-colors"
                   >
-                    <Phone className="w-4 h-4" /> Appeler
+                    <Gift className="w-4 h-4" /> Faire un don (Soutien)
                   </button>
+                </div>
+              </div>
+
+              {/* Développeur App */}
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+                <h3 className="font-bold text-lg text-stone-800 mb-4">Développeur App (Ibrahima Kane)</h3>
+                
+                <div className="flex flex-col gap-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => makeCall('+221 78 286 93 22')}
+                      className="flex items-center justify-center gap-2 bg-stone-100 text-stone-700 py-3 rounded-xl font-medium hover:bg-stone-200 transition-colors"
+                    >
+                      <Phone className="w-4 h-4" /> Appeler
+                    </button>
+                    <button 
+                      onClick={() => openWhatsApp('+221 78 286 93 22', 'Ibrahima')}
+                      className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" /> Message
+                    </button>
+                  </div>
+
                   <button 
-                    onClick={() => openWhatsApp('+221 76 261 30 15', 'Ciss')}
-                    className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors"
+                    onClick={() => setDonationTarget({ name: 'Développeur Ibrahima Kane', number: '+221 78 286 93 22' })}
+                    className="flex items-center justify-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 py-3 rounded-xl font-medium hover:bg-amber-100 transition-colors"
                   >
-                    <MessageCircle className="w-4 h-4" /> WhatsApp
+                    <Gift className="w-4 h-4" /> Faire un don (Soutien)
                   </button>
                 </div>
               </div>
@@ -734,6 +843,65 @@ export default function App() {
           <span className="text-[10px] font-bold uppercase">Aide</span>
         </button>
       </nav>
+
+      {/* Donation Modal */}
+      <AnimatePresence>
+        {donationTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-3xl p-6 w-full max-w-sm relative shadow-2xl"
+            >
+              <button 
+                onClick={() => { setDonationTarget(null); setCopied(false); }} 
+                className="absolute top-4 right-4 p-2 bg-stone-100 rounded-full text-stone-500 hover:bg-stone-200 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <h3 className="text-xl font-bold text-stone-900 mb-2">Faire un don</h3>
+              <p className="text-stone-500 text-sm mb-6">Soutenez {donationTarget.name} via Wave ou Orange Money.</p>
+
+              <div className="bg-stone-50 rounded-2xl p-4 text-center border border-stone-100 mb-6">
+                <span className="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-1">Numéro de transfert</span>
+                <span className="text-2xl font-bold tracking-wider text-stone-800">{donationTarget.number}</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="bg-[#EBF3FF] border border-[#B8D5FF] rounded-xl p-4 flex flex-col items-center justify-center">
+                  <span className="font-extrabold text-[#1123D6] text-xl">wave</span>
+                  <span className="text-[10px] text-blue-600 font-medium uppercase mt-1">Sénégal</span>
+                </div>
+                <div className="bg-[#FFF4EB] border border-[#FFD9B8] rounded-xl p-4 flex flex-col items-center justify-center">
+                  <span className="font-extrabold text-[#FF6600] text-xl">orange</span>
+                  <span className="text-[10px] text-orange-600 font-medium uppercase mt-1">Money</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(donationTarget.number.replace(/\s+/g, ''));
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+                  copied ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-stone-900 text-white hover:bg-stone-800 shadow-md shadow-stone-200'
+                }`}
+              >
+                {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                {copied ? 'Numéro copié !' : 'Copier le numéro'}
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

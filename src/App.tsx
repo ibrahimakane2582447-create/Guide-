@@ -17,7 +17,8 @@ import {
   Gift,
   X,
   Copy,
-  Check
+  Check,
+  Lightbulb
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -475,6 +476,58 @@ const DOUAS: Doua[] = [
   }
 ];
 
+interface Conseil {
+  id: string;
+  title: string;
+  french: string;
+  wolof: string;
+}
+
+const CONSEILS: Conseil[] = [
+  {
+    id: '1',
+    title: 'La Prière à l\'heure (Salat)',
+    french: "Ne retardez jamais votre prière, car elle est la première chose sur laquelle nous serons interrogés. C'est le lien direct avec Allah et la source de paix intérieure.",
+    wolof: "Bul maye sa julli mukk, ndax mooy mbir mi njëkk bees nuy laaj ëllëg. Mooy lëkkalekaay bi diggante jaam bi ak Yàlla, te mooy waral dalu xol."
+  },
+  {
+    id: '2',
+    title: 'Patience face aux épreuves (Sabr)',
+    french: "Face aux difficultés, armez-vous de patience et de prière. Les épreuves purifient et élèvent en degré. N'oubliez pas qu'avec la difficulté vient la facilité.",
+    wolof: "Ci jàfe-jàfe yi, màngal sa bopp ak muñ ak julli. Nattu yi dañuy laabal jëf ji, yokk yóob gi. Bul fàtte ne ci lu jàfe lay yombute di tágge."
+  },
+  {
+    id: '3',
+    title: 'Le Bon Comportement (Akhlaq)',
+    french: "Le Prophète ﷺ a été envoyé pour parfaire les nobles caractères. Soyez doux, souriant, honnête et pardonnez à ceux qui vous font du tort. Le bon comportement pèse lourd sur la balance.",
+    wolof: "Yónnent bi ﷺ ñëw na ngir matal jikko yi gën a rafet. Yàlaay woyof, di ree, di wax dëgg, te baal ñi la tooy. Jikko ju rafet dafay wees ci balaas bi ëllëg."
+  },
+  {
+    id: '4',
+    title: 'Garder les liens de parenté (Silat Ar-Rahm)',
+    french: "Rendez visite à vos proches, même s'ils s'éloignent de vous. Maintenir les liens familiaux prolonge la vie et augmente la bénédiction dans la subsistance.",
+    wolof: "Seeti sa mbokk yi, doonte dañu lay sori. Jokk mbokk dafay guddal dund gu barkeel, te mooy yokk wërsëg."
+  },
+  {
+    id: '5',
+    title: 'Éviter la Médisance (Gheebah)',
+    french: "Ne parlez pas sur le dos des autres. La médisance détruit les bonnes actions comme le feu détruit le bois. Préoccupez-vous de vos propres défauts avant ceux des autres.",
+    wolof: "Bul jëw kenn, bul wax ci wetu kenn. Jëw dafay yàq jëf yu baax yi ni safara di lakk matt. Yitteewo sa lëj-lëji bopp balaa ngay yitteewo lëj-lëji keneen."
+  },
+  {
+    id: '6',
+    title: 'La Constance dans les petites actions',
+    french: "La meilleure des actions auprès d'Allah consiste à être constant, même si l'action est minime. Une petite lecture de Coran ou deux rakaats quotidiennes valent mieux qu'une grande action occasionnelle.",
+    wolof: "Jëf ji Yàlla gën a bëgg mooy jëf ji nga xam ne dañ koy faral di def, donte tuuti la. Tuuti Alxuraan mbaa ñaari ràkkaa yoo faral di def, ñoo gën jëf ju rey joo def te duñ ko faral."
+  },
+  {
+    id: '7',
+    title: 'Le Repentir (Tawbah)',
+    french: "Ne désespérez jamais de la miséricorde d'Allah. Quel que soit le péché, revenez à Lui sincèrement. Le Seigneur pardonne tous les péchés à ceux qui se repentent.",
+    wolof: "Bul des mukk ci mbaarum Yàlla. Bépp bàkkaar boo man a def, déllool ci moom ak dëgg-dëgg. Boroom bi dafay baal yépp bàkkaar ci ñi tuub."
+  }
+];
+
 // --- Components ---
 
 const Card = ({ children, onClick, className = "" }: { children: React.ReactNode, onClick?: () => void, className?: string }) => (
@@ -488,7 +541,7 @@ const Card = ({ children, onClick, className = "" }: { children: React.ReactNode
 );
 
 export default function App() {
-  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'help'>('welcome');
+  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'conseils' | 'help'>('welcome');
   const [douaFilter, setDouaFilter] = useState<'all' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport'>('all');
   const [welcomeQuote, setWelcomeQuote] = useState(WELCOME_QUOTES[0]);
   const [donationTarget, setDonationTarget] = useState<{name: string, number: string} | null>(null);
@@ -562,6 +615,7 @@ export default function App() {
           {view === 'home' && "Guide Muslim"}
           {view === 'douas' && "Douas & Invocations"}
           {view === 'hadiths' && "Hadiths & Sagesses"}
+          {view === 'conseils' && "Conseils Religieux"}
           {view === 'help' && "Besoin d'aide"}
         </h2>
         <div className="w-10" />
@@ -595,6 +649,17 @@ export default function App() {
                 <div className="flex-1">
                   <h3 className="font-bold text-stone-800">Hadiths & Sagesses</h3>
                   <p className="text-sm text-stone-500">Trésors prophétiques</p>
+                </div>
+                <ChevronRight className="text-stone-300 w-5 h-5" />
+              </Card>
+
+              <Card onClick={() => setView('conseils')} className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
+                  <Lightbulb className="text-indigo-600 w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-stone-800">Conseils Religieux</h3>
+                  <p className="text-sm text-stone-500">Rappels pour la vie d'ici-bas</p>
                 </div>
                 <ChevronRight className="text-stone-300 w-5 h-5" />
               </Card>
@@ -717,6 +782,38 @@ export default function App() {
             </motion.div>
           )}
 
+          {view === 'conseils' && (
+            <motion.div 
+              key="conseils"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-4"
+            >
+              {CONSEILS.map((conseil) => (
+                <div key={conseil.id} className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-indigo-50 rounded-lg shrink-0">
+                      <Lightbulb className="w-5 h-5 text-indigo-600" />
+                    </div>
+                    <h3 className="font-bold text-stone-800 text-lg leading-tight">{conseil.title}</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex gap-2 items-start">
+                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded uppercase mt-0.5">FR</span>
+                      <p className="text-stone-600 text-sm leading-relaxed flex-1">{conseil.french}</p>
+                    </div>
+                    
+                    <div className="flex gap-2 items-start pt-2 border-t border-stone-100">
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase mt-0.5">WO</span>
+                      <p className="text-stone-600 text-sm leading-relaxed flex-1 text-emerald-900">{conseil.wolof}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
+
           {view === 'help' && (
             <motion.div 
               key="help"
@@ -825,22 +922,26 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 px-6 py-3 flex justify-around items-center z-10">
-        <button onClick={() => setView('home')} className={`flex flex-col items-center gap-1 ${view === 'home' ? 'text-emerald-600' : 'text-stone-400'}`}>
-          <BookOpen className="w-6 h-6" />
-          <span className="text-[10px] font-bold uppercase">Guide</span>
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 px-3 py-3 flex justify-between items-center z-10">
+        <button onClick={() => setView('home')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'home' ? 'text-emerald-600' : 'text-stone-400'}`}>
+          <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Guide</span>
         </button>
-        <button onClick={() => setView('douas')} className={`flex flex-col items-center gap-1 ${view === 'douas' ? 'text-emerald-600' : 'text-stone-400'}`}>
-          <ShieldCheck className="w-6 h-6" />
-          <span className="text-[10px] font-bold uppercase">Douas</span>
+        <button onClick={() => setView('douas')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'douas' ? 'text-emerald-600' : 'text-stone-400'}`}>
+          <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Douas</span>
         </button>
-        <button onClick={() => setView('hadiths')} className={`flex flex-col items-center gap-1 ${view === 'hadiths' ? 'text-emerald-600' : 'text-stone-400'}`}>
-          <Quote className="w-6 h-6" />
-          <span className="text-[10px] font-bold uppercase">Hadiths</span>
+        <button onClick={() => setView('hadiths')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'hadiths' ? 'text-emerald-600' : 'text-stone-400'}`}>
+          <Quote className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Hadiths</span>
         </button>
-        <button onClick={() => setView('help')} className={`flex flex-col items-center gap-1 ${view === 'help' ? 'text-emerald-600' : 'text-stone-400'}`}>
-          <HandHelping className="w-6 h-6" />
-          <span className="text-[10px] font-bold uppercase">Aide</span>
+        <button onClick={() => setView('conseils')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'conseils' ? 'text-emerald-600' : 'text-stone-400'}`}>
+          <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Conseils</span>
+        </button>
+        <button onClick={() => setView('help')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'help' ? 'text-emerald-600' : 'text-stone-400'}`}>
+          <HandHelping className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Aide</span>
         </button>
       </nav>
 

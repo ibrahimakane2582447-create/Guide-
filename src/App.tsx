@@ -18,7 +18,9 @@ import {
   X,
   Copy,
   Check,
-  Lightbulb
+  Lightbulb,
+  Volume2,
+  Droplets
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -32,6 +34,36 @@ interface Doua {
   reporter?: string;
   category: 'protection' | 'invocation' | 'daily' | 'lieux' | 'etudes' | 'transport' | 'hadith';
 }
+
+interface AblutionStep {
+  step: number;
+  title: string;
+  description: string;
+  wolof: string;
+}
+
+const ABLUTIONS_PETIT: AblutionStep[] = [
+  { step: 1, title: 'Intention (Niyyah)', description: 'Avoir l\'intention de faire ses ablutions pour la prière et dire "Bismillah".', wolof: 'Am yéene def njapp ngir julli, ne "Bismillah".' },
+  { step: 2, title: 'Mains', description: 'Laver les mains jusqu\'aux poignets, 3 fois.', wolof: 'Raxas say loxo ba ci say tikkuju-loxo, ñatti yoon.' },
+  { step: 3, title: 'Bouche', description: 'Se rincer la bouche, 3 fois.', wolof: 'Gàllaxndiku (raxas sa gémmiñ), ñatti yoon.' },
+  { step: 4, title: 'Nez', description: 'Inhaler l\'eau dans le nez et l\'expulser, 3 fois.', wolof: 'Saañu (dugal ndox ci sa bakkan te guénne ko), ñatti yoon.' },
+  { step: 5, title: 'Visage', description: 'Laver le visage entier (du front au menton, d\'une oreille à l\'autre), 3 fois.', wolof: 'Raxas sa kanam yepp (dale ko ci tool ba ci sa xabe), ñatti yoon.' },
+  { step: 6, title: 'Bras', description: 'Laver le bras droit jusqu\'au coude inclus (3x), puis le gauche (3x).', wolof: 'Raxas sa loxo ndeyjoor ba ci sa coñc (3x), teg ci loxo càmmooñ (3x).' },
+  { step: 7, title: 'Tête', description: 'Passer les mains mouillées de l\'avant de la tête vers l\'arrière et revenir, 1 fois.', wolof: 'Masap sa bopp (fóom sa bopp ak ndox), benn yoon.' },
+  { step: 8, title: 'Oreilles', description: 'Nettoyer l\'intérieur et l\'extérieur des oreilles, 1 fois.', wolof: 'Masap say nopp (biir ak biti), benn yoon.' },
+  { step: 9, title: 'Pieds', description: 'Laver le pied droit jusqu\'aux chevilles incluses (3x), puis le gauche (3x).', wolof: 'Raxas sa tànk ndeyjoor ba ci sa tikkuju-tànk (3x), teg ci bu càmmooñ (3x).' },
+  { step: 10, title: 'Doua (Fin)', description: 'Dire l\'invocation de fin : "Ach-hadou an la ilaha illallah..."', wolof: 'Ñaan bi ciy top : "Ach-hadou an la ilaha illallah..."' }
+];
+
+const ABLUTIONS_GRAND: AblutionStep[] = [
+  { step: 1, title: 'Intention (Niyyah)', description: 'Avoir l\'intention de se purifier (Janaba, menstrues...) et dire "Bismillah".', wolof: 'Am yéene laab (ci janaba, mbaa mbirum jigéen) ne "Bismillah".' },
+  { step: 2, title: 'Mains & Parties intimes', description: 'Laver les mains 3 fois, puis laver les parties intimes avec la main gauche.', wolof: 'Raxas say loxo 3 yoon, raxas say awra ak loxo càmmooñ.' },
+  { step: 3, title: 'Ablutions mineures', description: 'Faire les ablutions mineures comme pour la prière (sans se laver les pieds ou avec, selon l\'école).', wolof: 'Def njapp mu sell mi nga xamne mooy njappum julli.' },
+  { step: 4, title: 'Tête', description: 'Verser de l\'eau sur la tête 3 fois en frictionnant les cheveux jusqu\'aux racines.', wolof: 'Sotti ndox ci sa bopp 3 yoon, di xasaat say kawar ba ndox mi di àgg ci tàtt yi.' },
+  { step: 5, title: 'Côté droit', description: 'Verser de l\'eau et laver tout le côté droit du corps (de haut en bas).', wolof: 'Sotti ndox te raxas wàllu ndeyjooru yaram gi yépp.' },
+  { step: 6, title: 'Côté gauche', description: 'Verser de l\'eau et laver tout le côté gauche du corps.', wolof: 'Sotti ndox te raxas wàllu càmmooñu yaram gi yépp.' },
+  { step: 7, title: 'Tout le corps', description: 'S\'assurer que l\'eau a touché chaque partie du corps sans exception.', wolof: 'Na la wóor ne ndox mi romb na fu nekk ci sa yaram.' }
+];
 
 const WELCOME_QUOTES = [
   { text: "Invoquez-Moi, Je vous exaucerai.", source: "Coran 40:60" },
@@ -473,6 +505,96 @@ const DOUAS: Doua[] = [
     wolof: "Melo jullit ñi ci seen mbëggeel ak seen yërmande ñom ci seen biir mel na ni benn yaram.",
     reporter: "Rapporté par Al-Bukhari et Muslim",
     category: 'hadith'
+  },
+  {
+    id: '51',
+    title: 'Le meilleur d\'entre vous (Hadith)',
+    arabic: 'خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ',
+    french: "Le meilleur d'entre vous est celui qui apprend le Coran et l'enseigne.",
+    wolof: "Ki gën ci yeen mooy ki jàng Alxuraan te di ko jàngale.",
+    reporter: "Rapporté par Al-Bukhari",
+    category: 'hadith'
+  },
+  {
+    id: '52',
+    title: 'Les actes ne valent que par les intentions (Hadith)',
+    arabic: 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ',
+    french: "Les actes ne valent que par leurs intentions.",
+    wolof: "Jëf yi ci yéene lañuy wéy.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '53',
+    title: 'La propreté et la foi (Hadith)',
+    arabic: 'الطُّهُورُ شَطْرُ الْإِيمَانِ',
+    french: "La pureté (propreté) est la moitié de la foi.",
+    wolof: "Set (laab) mooy genn wàllu ngëm gi.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '54',
+    title: 'Le sourire, une aumône (Hadith)',
+    arabic: 'تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ',
+    french: "Ton sourire en face de ton frère est une aumône.",
+    wolof: "Sa ree ci kanamu sa mbokk, sadax (sarax) la.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+    id: '55',
+    title: 'La bonne parole (Hadith)',
+    arabic: 'مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ',
+    french: "Que celui qui croit en Allah et au Jour dernier dise du bien ou qu'il se taise.",
+    wolof: "Ku gëm Yàlla ak Bis bu mujj ba, n'a wax lu baax mbaa mu noppi.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '56',
+    title: 'L\'indulgence dans le commerce (Hadith)',
+    arabic: 'رَحِمَ اللَّهُ رَجُلًا سَمْحًا إِذَا بَاعَ وَإِذَا اشْتَرَى وَإِذَا اقْتَضَى',
+    french: "Qu'Allah fasse miséricorde à un homme indulgent (facile) quand il vend, quand il achète et quand il réclame son dû.",
+    wolof: "Yàlla na Yàlla yërëm nit ku woyof ci njaay mi, ci njënd mi ak ci laajam.",
+    reporter: "Rapporté par Al-Bukhari",
+    category: 'hadith'
+  },
+  {
+    id: '57',
+    title: 'La force véritable (Hadith)',
+    arabic: 'لَيْسَ الشَّدِيدُ بِالصُّرَعَةِ، إِنَّمَا الشَّدِيدُ الَّذِي يَمْلِكُ نَفْسَهُ عِنْدَ الْغَضَبِ',
+    french: "Le fort n'est pas celui qui abat les autres à la lutte, le fort est celui qui maîtrise son âme au moment de la colère.",
+    wolof: "Kàttan du ci daan nit ñi ci bëre, ku am kàttan dëgg mooy ki mën a téye boppam bu meré.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '58',
+    title: 'Ne te mets pas en colère (Hadith)',
+    arabic: 'لَا تَغْضَبْ',
+    french: "Ne te mets pas en colère.",
+    wolof: "Bul kàddu (bul mer).",
+    reporter: "Rapporté par Al-Bukhari",
+    category: 'hadith'
+  },
+  {
+    id: '59',
+    title: 'Faciliter les choses (Hadith)',
+    arabic: 'يَسِّرُوا وَلَا تُعَسِّرُوا، وَبَشِّرُوا وَلَا تُنَفِّرُوا',
+    french: "Rendez les choses faciles et ne les rendez pas difficiles, annoncez la bonne nouvelle et ne rebutez pas les gens.",
+    wolof: "Yombal-leen li ngeen di def te bu-leen ko xat-xatal, bégal-leen nit ñi te bu-leen leen dàq.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+    id: '60',
+    title: 'Le bon comportement (Hadith)',
+    arabic: 'أَكْمَلُ الْمُؤْمِنِينَ إِيمَانًا أَحْسَنُهُمْ خُلُقًا',
+    french: "Les croyants qui ont la foi la plus parfaite sont ceux qui ont le meilleur comportement.",
+    wolof: "Jullit ñi gën a mat ci ngëm ñoo gën a rafet jikko.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
   }
 ];
 
@@ -530,22 +652,61 @@ const CONSEILS: Conseil[] = [
 
 // --- Components ---
 
-const Card = ({ children, onClick, className = "" }: { children: React.ReactNode, onClick?: () => void, className?: string }) => (
+const Card = ({ children, onClick, className = "", style }: { children: React.ReactNode, onClick?: () => void, className?: string, style?: React.CSSProperties }) => (
   <motion.div 
-    whileTap={{ scale: 0.98 }}
+    whileTap={{ scale: 0.97 }}
+    whileHover={{ y: -2 }}
     onClick={onClick}
-    className={`bg-white rounded-2xl p-5 shadow-sm border border-stone-100 cursor-pointer hover:shadow-md transition-shadow ${className}`}
+    style={style}
+    className={`rounded-3xl p-5 transition-all duration-300 cursor-pointer ${className}`}
   >
     {children}
   </motion.div>
 );
 
 export default function App() {
-  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'conseils' | 'help'>('welcome');
-  const [douaFilter, setDouaFilter] = useState<'all' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport'>('all');
+  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'conseils' | 'help' | 'ablutions_petit' | 'ablutions_grand'>('welcome');
+  const [douaFilter, setDouaFilter] = useState<'all' | 'favorites' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport'>('all');
+  const [hadithFilter, setHadithFilter] = useState<'all' | 'favorites'>('all');
   const [welcomeQuote, setWelcomeQuote] = useState(WELCOME_QUOTES[0]);
   const [donationTarget, setDonationTarget] = useState<{name: string, number: string} | null>(null);
+  const [donationAmount, setDonationAmount] = useState('');
   const [copied, setCopied] = useState(false);
+  const [playingId, setPlayingId] = useState<string | null>(null);
+
+  const speak = (text: string, lang: string, id: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      
+      utterance.onstart = () => setPlayingId(id);
+      utterance.onend = () => setPlayingId(null);
+      utterance.onerror = () => setPlayingId(null);
+      
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('alihsan-favorites');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('alihsan-favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites(prev => 
+      prev.includes(id) ? prev.filter(fId => fId !== id) : [...prev, id]
+    );
+  };
 
   useEffect(() => {
     // Select a random quote on component mount
@@ -565,32 +726,58 @@ export default function App() {
   if (view === 'welcome') {
     return (
       <div 
-        className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6 text-center"
+        className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6 text-center pattern-bg relative overflow-hidden"
         onContextMenu={(e) => e.preventDefault()}
         onCopy={(e) => e.preventDefault()}
       >
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-stone-50/50 via-transparent to-stone-50 pointer-events-none" />
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="max-w-md w-full relative z-10"
         >
-          <div className="w-24 h-24 bg-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-emerald-200">
-            <Heart className="text-white w-12 h-12" />
-          </div>
-          <h1 className="text-3xl font-bold text-stone-900 mb-4">Bienvenue sur Al-Ihsan</h1>
-          <p className="text-stone-600 mb-10 leading-relaxed min-h-[5rem]">
-            "{welcomeQuote.text}" <br/>
-            <span className="italic text-sm opacity-75">— {welcomeQuote.source}</span>
-          </p>
-          <p className="text-stone-500 mb-12">
-            Votre recueil quotidien de douas et d'invocations pour chaque instant de la vie.
-          </p>
-          <button 
-            onClick={() => setView('home')}
-            className="w-full bg-emerald-600 text-white py-4 rounded-2xl font-semibold text-lg shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-colors"
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="w-24 h-24 bg-emerald-700 rounded-3xl rotate-3 flex items-center justify-center mx-auto mb-10 shadow-2xl shadow-emerald-900/20"
           >
-            Commencer mon guide
-          </button>
+            <Heart className="text-emerald-50 w-10 h-10 -rotate-3" />
+          </motion.div>
+          <motion.h1 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-4xl font-serif font-bold text-stone-900 mb-6"
+          >
+            Al-Ihsan
+          </motion.h1>
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6 }}
+            className="bg-white/80 backdrop-blur-md rounded-3xl p-8 mb-12 shadow-xl shadow-stone-200/50 border border-white"
+          >
+            <h2 className="text-stone-800 font-serif text-xl italic mb-3 leading-relaxed">
+              "{welcomeQuote.text}"
+            </h2>
+            <div className="w-12 h-0.5 bg-emerald-200 mx-auto mb-3" />
+            <p className="text-xs uppercase tracking-widest font-bold text-emerald-700">
+              {welcomeQuote.source}
+            </p>
+          </motion.div>
+          
+          <motion.button 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            onClick={() => setView('home')}
+            className="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-stone-900/20 hover:bg-stone-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+          >
+            Ouvrir mon guide
+          </motion.button>
         </motion.div>
       </div>
     );
@@ -617,6 +804,8 @@ export default function App() {
           {view === 'hadiths' && "Hadiths & Sagesses"}
           {view === 'conseils' && "Conseils Religieux"}
           {view === 'help' && "Besoin d'aide"}
+          {view === 'ablutions_petit' && "Petites Ablutions"}
+          {view === 'ablutions_grand' && "Grandes Ablutions"}
         </h2>
         <div className="w-10" />
       </header>
@@ -626,53 +815,84 @@ export default function App() {
           {view === 'home' && (
             <motion.div 
               key="home"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="grid gap-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="grid grid-cols-2 gap-4"
             >
-              <Card onClick={() => setView('douas')} className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
-                  <ShieldCheck className="text-amber-600 w-6 h-6" />
+              <Card onClick={() => setView('douas')} className="col-span-2 relative overflow-hidden bg-gradient-to-br from-emerald-800 to-emerald-950 min-h-[160px] border border-emerald-900 shadow-xl shadow-emerald-900/10">
+                <div className="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 bg-emerald-600 rounded-full mix-blend-multiply filter blur-2xl opacity-60"></div>
+                <div className="absolute bottom-0 left-0 -mb-6 -ml-6 w-24 h-24 bg-emerald-900 rounded-full mix-blend-multiply filter blur-xl opacity-60"></div>
+                
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div className="flex justify-between items-start">
+                    <div className="w-12 h-12 bg-emerald-700/50 backdrop-blur-md rounded-2xl flex items-center justify-center border border-emerald-500/30">
+                      <ShieldCheck className="text-emerald-100 w-6 h-6" />
+                    </div>
+                    <div className="bg-emerald-900/40 backdrop-blur-md p-2 rounded-full border border-emerald-500/20">
+                      <ChevronRight className="text-emerald-300 w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="mt-6">
+                    <h3 className="font-serif font-bold text-3xl text-emerald-50 mb-1">Douas</h3>
+                    <p className="text-emerald-200/80 text-sm font-medium tracking-wide">Invocations & Protections</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-stone-800">Douas & Invocations</h3>
-                  <p className="text-sm text-stone-500">Protections quotidiennes</p>
-                </div>
-                <ChevronRight className="text-stone-300 w-5 h-5" />
               </Card>
 
-              <Card onClick={() => setView('hadiths')} className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                  <Quote className="text-blue-600 w-6 h-6" />
+              <Card onClick={() => setView('ablutions_petit')} className="col-span-2 md:col-span-1 flex flex-col justify-between p-5 min-h-[150px] bg-teal-50 shadow-sm border border-teal-100 group hover:shadow-md">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="w-10 h-10 bg-white shadow-sm text-teal-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Droplets className="w-5 h-5" />
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-stone-800">Hadiths & Sagesses</h3>
-                  <p className="text-sm text-stone-500">Trésors prophétiques</p>
+                <div>
+                  <h3 className="font-bold text-stone-800 text-lg">Petites Ablutions</h3>
+                  <p className="text-xs text-stone-500 mt-1 font-medium">Pour la prière</p>
                 </div>
-                <ChevronRight className="text-stone-300 w-5 h-5" />
               </Card>
 
-              <Card onClick={() => setView('conseils')} className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
-                  <Lightbulb className="text-indigo-600 w-6 h-6" />
+              <Card onClick={() => setView('ablutions_grand')} className="col-span-2 md:col-span-1 flex flex-col justify-between p-5 min-h-[150px] bg-cyan-50 shadow-sm border border-cyan-100 group hover:shadow-md">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="w-10 h-10 bg-white shadow-sm text-cyan-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Droplets className="w-5 h-5 fill-cyan-100" />
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-stone-800">Conseils Religieux</h3>
-                  <p className="text-sm text-stone-500">Rappels pour la vie d'ici-bas</p>
+                <div>
+                  <h3 className="font-bold text-stone-800 text-lg">Grandes Ablutions</h3>
+                  <p className="text-xs text-stone-500 mt-1 font-medium">Purification complète</p>
                 </div>
-                <ChevronRight className="text-stone-300 w-5 h-5" />
               </Card>
 
-              <Card onClick={() => setView('help')} className="flex items-center gap-4 border-emerald-200 bg-emerald-50/30">
-                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                  <HandHelping className="text-emerald-700 w-6 h-6" />
+              <Card onClick={() => setView('hadiths')} className="flex flex-col justify-between p-5 min-h-[150px] bg-sky-50 shadow-sm border border-sky-100 group">
+                <div className="w-10 h-10 bg-white shadow-sm text-sky-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Quote className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-800 text-lg">Hadiths</h3>
+                  <p className="text-xs text-stone-500 mt-1 font-medium">Trésors prophétiques</p>
+                </div>
+              </Card>
+
+              <Card onClick={() => setView('conseils')} className="flex flex-col justify-between p-5 min-h-[150px] bg-indigo-50 shadow-sm border border-indigo-100 group">
+                <div className="w-10 h-10 bg-white shadow-sm text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Lightbulb className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-800 text-lg">Conseils</h3>
+                  <p className="text-xs text-stone-500 mt-1 font-medium">Rappels précieux</p>
+                </div>
+              </Card>
+
+              <Card onClick={() => setView('help')} className="col-span-2 flex items-center gap-5 p-5 bg-white border border-stone-200 hover:border-amber-200 shadow-sm">
+                <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center">
+                  <HandHelping className="text-amber-600 w-7 h-7" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-emerald-900">Besoin d'aide ?</h3>
-                  <p className="text-sm text-emerald-700">Contacter un Oustaz</p>
+                  <h3 className="font-bold text-stone-800 text-lg">Besoin d'aide ?</h3>
+                  <p className="text-sm text-stone-500 font-medium">Contacter un Oustaz</p>
                 </div>
-                <ChevronRight className="text-emerald-300 w-5 h-5" />
+                <ChevronRight className="text-stone-300 w-5 h-5 opacity-50" />
               </Card>
             </motion.div>
           )}
@@ -685,7 +905,7 @@ export default function App() {
               className="space-y-4"
             >
               <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                {['all', 'daily', 'protection', 'invocation', 'lieux', 'transport', 'etudes'].map((f) => (
+                {['all', 'favorites', 'daily', 'protection', 'invocation', 'lieux', 'transport', 'etudes'].map((f) => (
                   <button
                     key={f}
                     onClick={() => setDouaFilter(f as any)}
@@ -693,35 +913,60 @@ export default function App() {
                       douaFilter === f ? 'bg-amber-600 text-white shadow-md' : 'bg-white text-stone-500 border border-stone-100'
                     }`}
                   >
-                    {f === 'all' ? 'Tous' : f === 'lieux' ? 'Lieux' : f === 'etudes' ? 'Études & Examens' : f === 'transport' ? 'Véhicules & Transport' : f.charAt(0).toUpperCase() + f.slice(1)}
+                    {f === 'all' ? 'Tous' : f === 'favorites' ? 'Favoris' : f === 'lieux' ? 'Lieux' : f === 'etudes' ? 'Études & Examens' : f === 'transport' ? 'Véhicules & Transport' : f.charAt(0).toUpperCase() + f.slice(1)}
                   </button>
                 ))}
               </div>
 
-              {DOUAS.filter(d => d.category !== 'hadith' && (douaFilter === 'all' || d.category === douaFilter)).map((doua) => (
-                <div key={doua.id} className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-bold text-stone-800">{doua.title}</h3>
-                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full ${
-                      doua.category === 'protection' ? 'bg-red-50 text-red-600' : 
-                      doua.category === 'hadith' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
-                    }`}>
-                      {doua.category}
-                    </span>
+              {DOUAS.filter(d => d.category !== 'hadith' && (douaFilter === 'all' || (douaFilter === 'favorites' ? favorites.includes(d.id) : d.category === douaFilter))).map((doua) => (
+                <div key={doua.id} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300">
+                  <div className="flex justify-between items-start mb-6">
+                    <h3 className="font-serif font-bold text-xl text-emerald-950 pr-2">{doua.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[10px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full ${
+                        doua.category === 'protection' ? 'bg-red-50 text-red-600' : 
+                        doua.category === 'hadith' ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'
+                      }`}>
+                        {doua.category}
+                      </span>
+                      <button onClick={(e) => toggleFavorite(doua.id, e)} className="p-1 -mr-2 rounded-full hover:bg-stone-50 transition-colors">
+                        <Heart className={`w-6 h-6 ${favorites.includes(doua.id) ? 'fill-emerald-500 text-emerald-500' : 'text-stone-300 hover:text-emerald-400'}`} />
+                      </button>
+                    </div>
                   </div>
-                  <p className="arabic-text text-2xl text-stone-900 mb-4 text-right leading-loose">{doua.arabic}</p>
-                  <div className="h-px bg-stone-100 mb-4" />
+                  <div className="flex justify-between items-center mb-6">
+                    <p className="arabic-text text-3xl md:text-4xl text-emerald-900 text-right leading-[2] md:leading-[2] opacity-90 flex-1">{doua.arabic}</p>
+                    <button 
+                      onClick={() => speak(doua.arabic!, 'ar-SA', `ar-${doua.id}`)}
+                      className={`p-2 rounded-full ml-4 transition-colors shrink-0 ${playingId === `ar-${doua.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                    >
+                      <Volume2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent mb-6" />
                   
-                  <div className="space-y-3">
-                    <div className="flex gap-2 items-start">
-                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded uppercase mt-0.5">FR</span>
-                      <p className="text-stone-600 text-sm italic leading-relaxed flex-1">"{doua.french}"</p>
+                  <div className="space-y-4">
+                    <div className="flex gap-3 items-start">
+                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded uppercase mt-0.5">FR</span>
+                      <p className="text-stone-600 text-sm md:text-base leading-relaxed flex-1 font-medium">"{doua.french}"</p>
+                      <button 
+                        onClick={() => speak(doua.french, 'fr-FR', `fr-${doua.id}`)}
+                        className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `fr-${doua.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                     </div>
                     
                     {doua.wolof && (
-                      <div className="flex gap-2 items-start pt-1">
-                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase mt-0.5">WO</span>
-                        <p className="text-stone-600 text-sm italic leading-relaxed flex-1 text-emerald-900">"{doua.wolof}"</p>
+                      <div className="flex gap-3 items-start pt-2">
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
+                        <p className="text-stone-600 text-sm md:text-base leading-relaxed flex-1 text-emerald-900 font-medium">"{doua.wolof}"</p>
+                        <button 
+                          onClick={() => speak(doua.wolof!, 'fr-FR', `wo-${doua.id}`)}
+                          className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-${doua.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        >
+                          <Volume2 className="w-4 h-4" />
+                        </button>
                       </div>
                     )}
 
@@ -745,27 +990,66 @@ export default function App() {
               animate={{ opacity: 1, x: 0 }}
               className="space-y-4"
             >
-              {DOUAS.filter(d => d.category === 'hadith').map((hadith) => (
-                <div key={hadith.id} className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-bold text-stone-800">{hadith.title}</h3>
-                    <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-600">
-                      Hadith
-                    </span>
+              <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
+                {['all', 'favorites'].map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setHadithFilter(f as any)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                      hadithFilter === f ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-stone-500 border border-stone-100'
+                    }`}
+                  >
+                    {f === 'all' ? 'Tous' : 'Favoris'}
+                  </button>
+                ))}
+              </div>
+
+              {DOUAS.filter(d => d.category === 'hadith' && (hadithFilter === 'all' || favorites.includes(d.id))).map((hadith) => (
+                <div key={hadith.id} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300">
+                  <div className="flex justify-between items-start mb-6">
+                    <h3 className="font-serif font-bold text-xl text-sky-950 pr-2">{hadith.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full bg-sky-50 text-sky-600">
+                        Hadith
+                      </span>
+                      <button onClick={(e) => toggleFavorite(hadith.id, e)} className="p-1 -mr-2 rounded-full hover:bg-stone-50 transition-colors">
+                        <Heart className={`w-6 h-6 ${favorites.includes(hadith.id) ? 'fill-sky-500 text-sky-500' : 'text-stone-300 hover:text-sky-400'}`} />
+                      </button>
+                    </div>
                   </div>
-                  <p className="arabic-text text-2xl text-stone-900 mb-4 text-right leading-loose">{hadith.arabic}</p>
-                  <div className="h-px bg-stone-100 mb-4" />
+                  <div className="flex justify-between items-center mb-6">
+                    <p className="arabic-text text-3xl md:text-4xl text-sky-900 text-right leading-[2] md:leading-[2] opacity-90 flex-1">{hadith.arabic}</p>
+                    <button 
+                      onClick={() => speak(hadith.arabic!, 'ar-SA', `ar-${hadith.id}`)}
+                      className={`p-2 rounded-full ml-4 transition-colors shrink-0 ${playingId === `ar-${hadith.id}` ? 'bg-sky-100 text-sky-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                    >
+                      <Volume2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent mb-6" />
                   
-                  <div className="space-y-3">
-                    <div className="flex gap-2 items-start">
-                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded uppercase mt-0.5">FR</span>
-                      <p className="text-stone-600 text-sm italic leading-relaxed flex-1">"{hadith.french}"</p>
+                  <div className="space-y-4">
+                    <div className="flex gap-3 items-start">
+                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded uppercase mt-0.5">FR</span>
+                      <p className="text-stone-600 text-sm md:text-base leading-relaxed flex-1 font-medium">"{hadith.french}"</p>
+                      <button 
+                        onClick={() => speak(hadith.french, 'fr-FR', `fr-${hadith.id}`)}
+                        className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `fr-${hadith.id}` ? 'bg-sky-100 text-sky-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                     </div>
                     
                     {hadith.wolof && (
-                      <div className="flex gap-2 items-start pt-1">
-                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase mt-0.5">WO</span>
-                        <p className="text-stone-600 text-sm italic leading-relaxed flex-1 text-emerald-900">"{hadith.wolof}"</p>
+                      <div className="flex gap-3 items-start pt-2">
+                        <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
+                        <p className="text-stone-600 text-sm md:text-base leading-relaxed flex-1 text-sky-900 font-medium">"{hadith.wolof}"</p>
+                        <button 
+                          onClick={() => speak(hadith.wolof!, 'fr-FR', `wo-${hadith.id}`)}
+                          className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-${hadith.id}` ? 'bg-sky-100 text-sky-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        >
+                          <Volume2 className="w-4 h-4" />
+                        </button>
                       </div>
                     )}
 
@@ -790,23 +1074,23 @@ export default function App() {
               className="space-y-4"
             >
               {CONSEILS.map((conseil) => (
-                <div key={conseil.id} className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-indigo-50 rounded-lg shrink-0">
-                      <Lightbulb className="w-5 h-5 text-indigo-600" />
+                <div key={conseil.id} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="p-3 bg-indigo-50 rounded-2xl shrink-0">
+                      <Lightbulb className="w-6 h-6 text-indigo-600" />
                     </div>
-                    <h3 className="font-bold text-stone-800 text-lg leading-tight">{conseil.title}</h3>
+                    <h3 className="font-serif font-bold text-stone-900 text-xl leading-tight">{conseil.title}</h3>
                   </div>
                   
-                  <div className="space-y-4">
-                    <div className="flex gap-2 items-start">
-                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-1.5 py-0.5 rounded uppercase mt-0.5">FR</span>
-                      <p className="text-stone-600 text-sm leading-relaxed flex-1">{conseil.french}</p>
+                  <div className="space-y-5">
+                    <div className="flex gap-3 items-start">
+                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded uppercase mt-0.5">FR</span>
+                      <p className="text-stone-700 text-base leading-relaxed flex-1 font-medium">{conseil.french}</p>
                     </div>
                     
-                    <div className="flex gap-2 items-start pt-2 border-t border-stone-100">
-                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded uppercase mt-0.5">WO</span>
-                      <p className="text-stone-600 text-sm leading-relaxed flex-1 text-emerald-900">{conseil.wolof}</p>
+                    <div className="flex gap-3 items-start pt-3 border-t border-stone-100">
+                      <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
+                      <p className="text-stone-700 text-base leading-relaxed flex-1 text-indigo-900/90 font-medium">{conseil.wolof}</p>
                     </div>
                   </div>
                 </div>
@@ -825,97 +1109,169 @@ export default function App() {
                 <p className="text-stone-600">Nos Oustaz sont à votre disposition pour toute question religieuse.</p>
               </div>
 
-              {/* Oustaz Kane */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-                <h3 className="font-bold text-lg text-stone-800 mb-4">Oustaz Kane</h3>
-                
-                <div className="flex flex-col gap-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <button 
-                      onClick={() => makeCall('770903109')}
-                      className="flex items-center justify-center gap-2 bg-stone-100 text-stone-700 py-3 rounded-xl font-medium hover:bg-stone-200 transition-colors"
-                    >
-                      <Phone className="w-4 h-4" /> Appeler
-                    </button>
-                    <button 
-                      onClick={() => openWhatsApp('770903109', 'Kane')}
-                      className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors"
-                    >
-                      <MessageCircle className="w-4 h-4" /> Poser question
-                    </button>
-                  </div>
-                  
-                  <button 
-                    onClick={() => setDonationTarget({ name: 'Oustaz Kane', number: '77 090 31 09' })}
-                    className="flex items-center justify-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 py-3 rounded-xl font-medium hover:bg-amber-100 transition-colors"
-                  >
-                    <Gift className="w-4 h-4" /> Faire un don (Soutien)
-                  </button>
-                </div>
-              </div>
-
-              {/* Oustaz Ciss */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-                <h3 className="font-bold text-lg text-stone-800 mb-4">Oustaz Ciss</h3>
-                
-                <div className="flex flex-col gap-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <button 
-                      onClick={() => makeCall('+221 76 261 30 15')}
-                      className="flex items-center justify-center gap-2 bg-stone-100 text-stone-700 py-3 rounded-xl font-medium hover:bg-stone-200 transition-colors"
-                    >
-                      <Phone className="w-4 h-4" /> Appeler
-                    </button>
-                    <button 
-                      onClick={() => openWhatsApp('+221 76 261 30 15', 'Ciss')}
-                      className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors"
-                    >
-                      <MessageCircle className="w-4 h-4" /> Poser question
-                    </button>
-                  </div>
-
-                  <button 
-                    onClick={() => setDonationTarget({ name: 'Oustaz Ciss', number: '+221 76 261 30 15' })}
-                    className="flex items-center justify-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 py-3 rounded-xl font-medium hover:bg-amber-100 transition-colors"
-                  >
-                    <Gift className="w-4 h-4" /> Faire un don (Soutien)
-                  </button>
-                </div>
-              </div>
-
               {/* Développeur App */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-                <h3 className="font-bold text-lg text-stone-800 mb-4">Développeur App (Ibrahima Kane)</h3>
-                
-                <div className="flex flex-col gap-3">
-                  <div className="grid grid-cols-2 gap-3">
+              <div className="bg-stone-900 text-white p-6 md:p-8 rounded-3xl shadow-xl shadow-stone-900/10">
+                <h3 className="font-serif font-bold text-2xl mb-2 text-stone-50">Support Technique</h3>
+                <p className="text-stone-400 mb-6 text-sm">Développeur App (Ibrahima Kane)</p>
+                <div className="flex flex-col gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <button 
                       onClick={() => makeCall('+221 78 286 93 22')}
-                      className="flex items-center justify-center gap-2 bg-stone-100 text-stone-700 py-3 rounded-xl font-medium hover:bg-stone-200 transition-colors"
+                      className="flex items-center justify-center gap-2 bg-stone-800 text-stone-100 py-3 md:py-4 rounded-2xl font-bold hover:bg-stone-700 transition-colors border border-stone-700"
                     >
-                      <Phone className="w-4 h-4" /> Appeler
+                      <Phone className="w-5 h-5" /> Appeler
                     </button>
                     <button 
                       onClick={() => openWhatsApp('+221 78 286 93 22', 'Ibrahima')}
-                      className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors"
+                      className="flex items-center justify-center gap-2 bg-emerald-500 text-white py-3 md:py-4 rounded-2xl font-bold hover:bg-emerald-600 transition-colors shadow-md shadow-emerald-900/50"
                     >
-                      <MessageCircle className="w-4 h-4" /> Message
+                      <MessageCircle className="w-5 h-5" /> Message
                     </button>
                   </div>
 
                   <button 
                     onClick={() => setDonationTarget({ name: 'Développeur Ibrahima Kane', number: '+221 78 286 93 22' })}
-                    className="flex items-center justify-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 py-3 rounded-xl font-medium hover:bg-amber-100 transition-colors"
+                    className="flex items-center justify-center gap-2 bg-amber-500 text-amber-950 py-3 md:py-4 rounded-2xl font-bold hover:bg-amber-400 transition-colors shadow-lg"
                   >
-                    <Gift className="w-4 h-4" /> Faire un don (Soutien)
+                    <Gift className="w-5 h-5" /> Soutenir le développeur
                   </button>
                 </div>
               </div>
 
-              <div className="pt-10 text-center border-t border-stone-200">
-                <p className="text-stone-400 text-sm font-medium uppercase tracking-widest">Ibrahima Kane</p>
-                <p className="text-stone-400 text-xs">Diamaguene, Dakar</p>
+              <div className="h-px bg-stone-200 my-8"></div>
+
+              {/* Oustaz Kane */}
+              <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200">
+                <h3 className="font-serif font-bold text-2xl text-stone-900 mb-6">Oustaz Kane</h3>
+                
+                <div className="flex flex-col gap-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <button 
+                      onClick={() => makeCall('770903109')}
+                      className="flex items-center justify-center gap-2 bg-stone-100 text-stone-800 py-3 md:py-4 rounded-2xl font-bold hover:bg-stone-200 transition-colors shadow-sm"
+                    >
+                      <Phone className="w-5 h-5" /> Appeler
+                    </button>
+                    <button 
+                      onClick={() => openWhatsApp('770903109', 'Kane')}
+                      className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 md:py-4 rounded-2xl font-bold hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-600/20"
+                    >
+                      <MessageCircle className="w-5 h-5" /> Message
+                    </button>
+                  </div>
+                  
+                  <button 
+                    onClick={() => setDonationTarget({ name: 'Oustaz Kane', number: '77 090 31 09' })}
+                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-amber-50 to-amber-100/50 text-amber-800 border border-amber-200 py-3 md:py-4 rounded-2xl font-bold hover:from-amber-100 hover:to-amber-100 transition-colors"
+                  >
+                    <Gift className="w-5 h-5" /> Faire un don (Soutien)
+                  </button>
+                </div>
               </div>
+
+              {/* Oustaz Ciss */}
+              <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200">
+                <h3 className="font-serif font-bold text-2xl text-stone-900 mb-6">Oustaz Ciss</h3>
+                
+                <div className="flex flex-col gap-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <button 
+                      onClick={() => makeCall('+221 76 261 30 15')}
+                      className="flex items-center justify-center gap-2 bg-stone-100 text-stone-800 py-3 md:py-4 rounded-2xl font-bold hover:bg-stone-200 transition-colors shadow-sm"
+                    >
+                      <Phone className="w-5 h-5" /> Appeler
+                    </button>
+                    <button 
+                      onClick={() => openWhatsApp('+221 76 261 30 15', 'Ciss')}
+                      className="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3 md:py-4 rounded-2xl font-bold hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-600/20"
+                    >
+                      <MessageCircle className="w-5 h-5" /> Message
+                    </button>
+                  </div>
+
+                  <button 
+                    onClick={() => setDonationTarget({ name: 'Oustaz Ciss', number: '+221 76 261 30 15' })}
+                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-amber-50 to-amber-100/50 text-amber-800 border border-amber-200 py-3 md:py-4 rounded-2xl font-bold hover:from-amber-100 hover:to-amber-100 transition-colors"
+                  >
+                    <Gift className="w-5 h-5" /> Faire un don (Soutien)
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          {view === 'ablutions_petit' && (
+            <motion.div 
+              key="ablutions_petit"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-4"
+            >
+              <div className="bg-teal-50 rounded-2xl p-6 mb-6 text-center shadow-inner">
+                <Droplets className="w-10 h-10 text-teal-600 mx-auto mb-3" />
+                <h3 className="font-serif font-bold text-xl text-teal-950">Les Petites Ablutions</h3>
+                <p className="text-teal-800 text-sm mt-2">La purification nécessaire avant chaque prièrerituelle (Salat).</p>
+              </div>
+
+              {ABLUTIONS_PETIT.map((step, index) => (
+                <div key={index} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200">
+                  <div className="flex gap-4 items-start mb-4">
+                    <div className="w-8 h-8 bg-teal-100 text-teal-700 font-bold rounded-full flex items-center justify-center shrink-0">
+                      {step.step}
+                    </div>
+                    <h3 className="font-serif font-bold text-xl text-stone-900 mt-0.5">{step.title}</h3>
+                  </div>
+                  
+                  <div className="space-y-4 ml-12">
+                    <div className="flex gap-3 items-start">
+                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded uppercase mt-0.5">FR</span>
+                      <p className="text-stone-700 text-base leading-relaxed flex-1 font-medium">{step.description}</p>
+                    </div>
+                    
+                    <div className="flex gap-3 items-start pt-3 border-t border-stone-100">
+                      <span className="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
+                      <p className="text-stone-700 text-base leading-relaxed flex-1 text-teal-900/90 font-medium">{step.wolof}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
+
+          {view === 'ablutions_grand' && (
+            <motion.div 
+              key="ablutions_grand"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-4"
+            >
+              <div className="bg-cyan-50 rounded-2xl p-6 mb-6 text-center shadow-inner">
+                <Droplets className="w-10 h-10 text-cyan-600 mx-auto mb-3" />
+                <h3 className="font-serif font-bold text-xl text-cyan-950">Les Grandes Ablutions (Janaba)</h3>
+                <p className="text-cyan-800 text-sm mt-2">Le lavage rituel complet (Ghusl) nécessaire après l'impureté majeure.</p>
+              </div>
+
+              {ABLUTIONS_GRAND.map((step, index) => (
+                <div key={index} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200">
+                  <div className="flex gap-4 items-start mb-4">
+                    <div className="w-8 h-8 bg-cyan-100 text-cyan-700 font-bold rounded-full flex items-center justify-center shrink-0">
+                      {step.step}
+                    </div>
+                    <h3 className="font-serif font-bold text-xl text-stone-900 mt-0.5">{step.title}</h3>
+                  </div>
+                  
+                  <div className="space-y-4 ml-12">
+                    <div className="flex gap-3 items-start">
+                      <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded uppercase mt-0.5">FR</span>
+                      <p className="text-stone-700 text-base leading-relaxed flex-1 font-medium">{step.description}</p>
+                    </div>
+                    
+                    <div className="flex gap-3 items-start pt-3 border-t border-stone-100">
+                      <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
+                      <p className="text-stone-700 text-base leading-relaxed flex-1 text-cyan-900/90 font-medium">{step.wolof}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
@@ -952,37 +1308,96 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-md flex items-center justify-center p-4"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-3xl p-6 w-full max-w-sm relative shadow-2xl"
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-[2rem] p-8 w-full max-w-sm relative shadow-2xl border border-white"
             >
               <button 
-                onClick={() => { setDonationTarget(null); setCopied(false); }} 
-                className="absolute top-4 right-4 p-2 bg-stone-100 rounded-full text-stone-500 hover:bg-stone-200 transition-colors"
+                onClick={() => { setDonationTarget(null); setCopied(false); setDonationAmount(''); }} 
+                className="absolute top-6 right-6 p-2 bg-stone-100 rounded-full text-stone-500 hover:bg-stone-200 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
               
-              <h3 className="text-xl font-bold text-stone-900 mb-2">Faire un don</h3>
-              <p className="text-stone-500 text-sm mb-6">Soutenez {donationTarget.name} via Wave ou Orange Money.</p>
+              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6">
+                <Gift className="w-6 h-6" />
+              </div>
 
-              <div className="bg-stone-50 rounded-2xl p-4 text-center border border-stone-100 mb-6">
-                <span className="text-xs font-bold text-stone-400 uppercase tracking-widest block mb-1">Numéro de transfert</span>
-                <span className="text-2xl font-bold tracking-wider text-stone-800">{donationTarget.number}</span>
+              <h3 className="text-2xl font-serif font-bold text-stone-900 mb-2">Faire un don</h3>
+              <p className="text-stone-500 text-sm mb-8 leading-relaxed">Soutenez <strong className="text-stone-700">{donationTarget.name}</strong> via Wave ou Orange Money.</p>
+
+              <div className="bg-stone-50 rounded-2xl p-5 text-center border border-stone-100 mb-6 inset-shadow-sm">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block mb-2">Numéro de transfert</span>
+                <span className="text-3xl font-bold tracking-wider text-stone-800">{donationTarget.number}</span>
+                
+                <div className="mt-5 pt-5 border-t border-stone-200">
+                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block mb-2">Montant du don (FCFA)</span>
+                  <input 
+                    type="number"
+                    value={donationAmount}
+                    onChange={(e) => setDonationAmount(e.target.value)}
+                    placeholder="Saisir le montant"
+                    className="w-full text-center bg-white border border-stone-200 rounded-xl py-3 text-xl font-bold text-stone-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all placeholder:font-normal placeholder:text-stone-300"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="bg-[#EBF3FF] border border-[#B8D5FF] rounded-xl p-4 flex flex-col items-center justify-center">
-                  <span className="font-extrabold text-[#1123D6] text-xl">wave</span>
-                  <span className="text-[10px] text-blue-600 font-medium uppercase mt-1">Sénégal</span>
+                {/* Wave Options */}
+                <div className="flex flex-col gap-2 bg-[#F3f7FF] p-3 rounded-2xl border border-[#D5E5FF]">
+                  <p className="text-[10px] text-blue-600 font-bold uppercase text-center w-full pb-1 mb-1 border-b border-[#D5E5FF]">Wave</p>
+                  <button 
+                    onClick={() => {
+                      const number = donationTarget.number.replace(/\s+/g, '');
+                      const localNumber = number.startsWith('+221') ? number.slice(4) : number.startsWith('221') ? number.slice(3) : number;
+                      window.location.href = `wave://send?phone=${localNumber}&amount=${donationAmount}`;
+                    }}
+                    disabled={!donationAmount}
+                    className="bg-white border border-[#B8D5FF] rounded-xl py-3 flex flex-col items-center justify-center hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    <span className="font-bold text-[#1123D6] text-sm leading-none">Fais le don (App)</span>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      window.location.href = `tel:%232171%23`;
+                    }}
+                    disabled={!donationAmount}
+                    className="bg-white border border-[#B8D5FF] rounded-xl py-3 flex flex-col items-center justify-center hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    <span className="font-bold text-[#1123D6] text-sm leading-none">Fais le don (#2171#)</span>
+                  </button>
                 </div>
-                <div className="bg-[#FFF4EB] border border-[#FFD9B8] rounded-xl p-4 flex flex-col items-center justify-center">
-                  <span className="font-extrabold text-[#FF6600] text-xl">orange</span>
-                  <span className="text-[10px] text-orange-600 font-medium uppercase mt-1">Money</span>
+
+                {/* Orange Options */}
+                <div className="flex flex-col gap-2 bg-[#FFF9F3] p-3 rounded-2xl border border-[#FFE8D5]">
+                  <p className="text-[10px] text-orange-600 font-bold uppercase text-center w-full pb-1 mb-1 border-b border-[#FFE8D5]">Orange Money</p>
+                  <button 
+                    onClick={() => {
+                      const number = donationTarget.number.replace(/\s+/g, '');
+                      const localNumber = number.startsWith('+221') ? number.slice(4) : number.startsWith('221') ? number.slice(3) : number;
+                      // Fallback URI pour Max it / Orange Money
+                      window.location.href = `omoney://send?phone=${localNumber}&amount=${donationAmount}`;
+                    }}
+                    disabled={!donationAmount}
+                    className="bg-white border border-[#FFD9B8] rounded-xl py-3 flex flex-col items-center justify-center hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    <span className="font-bold text-[#FF6600] text-sm leading-none">Fais le don (App)</span>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      const number = donationTarget.number.replace(/\s+/g, '');
+                      const localNumber = number.startsWith('+221') ? number.slice(4) : number.startsWith('221') ? number.slice(3) : number;
+                      window.location.href = `tel:*144*1*1*${localNumber}*${donationAmount}#`;
+                    }}
+                    disabled={!donationAmount}
+                    className="bg-white border border-[#FFD9B8] rounded-xl py-3 flex flex-col items-center justify-center hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    <span className="font-bold text-[#FF6600] text-sm leading-none">Fais le don (USSD)</span>
+                  </button>
                 </div>
               </div>
 
@@ -992,12 +1407,12 @@ export default function App() {
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
                 }}
-                className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
-                  copied ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-stone-900 text-white hover:bg-stone-800 shadow-md shadow-stone-200'
+                className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 ${
+                  copied ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-stone-100 text-stone-700 hover:bg-stone-200 border border-stone-200'
                 }`}
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                {copied ? 'Numéro copié !' : 'Copier le numéro'}
+                {copied ? 'Numéro copié !' : 'Copier le numéro manuellement'}
               </button>
             </motion.div>
           </motion.div>

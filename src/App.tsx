@@ -20,9 +20,11 @@ import {
   Check,
   Lightbulb,
   Volume2,
-  Droplets
+  Droplets,
+  Camera
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import * as htmlToImage from 'html-to-image';
 
 // --- Types ---
 interface Doua {
@@ -673,6 +675,38 @@ export default function App() {
   const [donationAmount, setDonationAmount] = useState('');
   const [copied, setCopied] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [isCapturing, setIsCapturing] = useState<string | null>(null);
+
+  const handleCapture = (id: string, fileName: string) => {
+    setIsCapturing(id);
+    setTimeout(async () => {
+      const element = document.getElementById(id);
+      if (!element) {
+        setIsCapturing(null);
+        return;
+      }
+      try {
+        const dataUrl = await htmlToImage.toPng(element, {
+          pixelRatio: 2,
+          backgroundColor: '#ffffff',
+          filter: (node) => {
+            if (node instanceof HTMLElement) {
+              return node.getAttribute('data-html2canvas-ignore') !== 'true';
+            }
+            return true;
+          }
+        });
+        const link = document.createElement('a');
+        link.download = `${fileName}.png`;
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        console.error('Erreur lors de la capture', err);
+      } finally {
+        setIsCapturing(null);
+      }
+    }, 150);
+  };
 
   const speak = (text: string, lang: string, id: string) => {
     if ('speechSynthesis' in window) {
@@ -919,26 +953,36 @@ export default function App() {
               </div>
 
               {DOUAS.filter(d => d.category !== 'hadith' && (douaFilter === 'all' || (douaFilter === 'favorites' ? favorites.includes(d.id) : d.category === douaFilter))).map((doua) => (
-                <div key={doua.id} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300">
+                <div key={doua.id} id={`capture-doua-${doua.id}`} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300 relative">
                   <div className="flex justify-between items-start mb-6">
                     <h3 className="font-serif font-bold text-xl text-emerald-950 pr-2">{doua.title}</h3>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2">
                       <span className={`text-[10px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full ${
                         doua.category === 'protection' ? 'bg-red-50 text-red-600' : 
                         doua.category === 'hadith' ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'
                       }`}>
                         {doua.category}
                       </span>
-                      <button onClick={(e) => toggleFavorite(doua.id, e)} className="p-1 -mr-2 rounded-full hover:bg-stone-50 transition-colors">
-                        <Heart className={`w-6 h-6 ${favorites.includes(doua.id) ? 'fill-emerald-500 text-emerald-500' : 'text-stone-300 hover:text-emerald-400'}`} />
-                      </button>
+                      <div className="flex items-center gap-1 sm:gap-2" data-html2canvas-ignore="true">
+                        <button 
+                          onClick={() => handleCapture(`capture-doua-${doua.id}`, `doua-${doua.id}`)} 
+                          className="p-1.5 sm:p-2 rounded-full hover:bg-stone-50 transition-colors text-stone-300 hover:text-emerald-500"
+                          title="Capturer l'image"
+                        >
+                          <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
+                        </button>
+                        <button onClick={(e) => toggleFavorite(doua.id, e)} className="p-1.5 sm:p-2 -mr-2 rounded-full hover:bg-stone-50 transition-colors">
+                          <Heart className={`w-5 h-5 sm:w-6 sm:h-6 ${favorites.includes(doua.id) ? 'fill-emerald-500 text-emerald-500' : 'text-stone-300 hover:text-emerald-400'}`} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="flex justify-between items-center mb-6">
-                    <p className="arabic-text text-3xl md:text-4xl text-emerald-900 text-right leading-[2] md:leading-[2] opacity-90 flex-1">{doua.arabic}</p>
+                    <p className="arabic-text text-4xl md:text-5xl text-emerald-900 text-right leading-loose md:leading-loose opacity-90 flex-1 py-2">{doua.arabic}</p>
                     <button 
                       onClick={() => speak(doua.arabic!, 'ar-SA', `ar-${doua.id}`)}
                       className={`p-2 rounded-full ml-4 transition-colors shrink-0 ${playingId === `ar-${doua.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                      data-html2canvas-ignore="true"
                     >
                       <Volume2 className="w-5 h-5" />
                     </button>
@@ -952,6 +996,7 @@ export default function App() {
                       <button 
                         onClick={() => speak(doua.french, 'fr-FR', `fr-${doua.id}`)}
                         className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `fr-${doua.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        data-html2canvas-ignore="true"
                       >
                         <Volume2 className="w-4 h-4" />
                       </button>
@@ -964,6 +1009,7 @@ export default function App() {
                         <button 
                           onClick={() => speak(doua.wolof!, 'fr-FR', `wo-${doua.id}`)}
                           className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-${doua.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                          data-html2canvas-ignore="true"
                         >
                           <Volume2 className="w-4 h-4" />
                         </button>
@@ -1005,23 +1051,33 @@ export default function App() {
               </div>
 
               {DOUAS.filter(d => d.category === 'hadith' && (hadithFilter === 'all' || favorites.includes(d.id))).map((hadith) => (
-                <div key={hadith.id} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300">
+                <div key={hadith.id} id={`capture-hadith-${hadith.id}`} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300 relative">
                   <div className="flex justify-between items-start mb-6">
                     <h3 className="font-serif font-bold text-xl text-sky-950 pr-2">{hadith.title}</h3>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2">
                       <span className="text-[10px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-full bg-sky-50 text-sky-600">
                         Hadith
                       </span>
-                      <button onClick={(e) => toggleFavorite(hadith.id, e)} className="p-1 -mr-2 rounded-full hover:bg-stone-50 transition-colors">
-                        <Heart className={`w-6 h-6 ${favorites.includes(hadith.id) ? 'fill-sky-500 text-sky-500' : 'text-stone-300 hover:text-sky-400'}`} />
-                      </button>
+                      <div className="flex items-center gap-1 sm:gap-2" data-html2canvas-ignore="true">
+                        <button 
+                          onClick={() => handleCapture(`capture-hadith-${hadith.id}`, `hadith-${hadith.id}`)} 
+                          className="p-1.5 sm:p-2 rounded-full hover:bg-stone-50 transition-colors text-stone-300 hover:text-sky-500"
+                          title="Capturer l'image"
+                        >
+                          <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
+                        </button>
+                        <button onClick={(e) => toggleFavorite(hadith.id, e)} className="p-1.5 sm:p-2 -mr-2 rounded-full hover:bg-stone-50 transition-colors">
+                          <Heart className={`w-5 h-5 sm:w-6 sm:h-6 ${favorites.includes(hadith.id) ? 'fill-sky-500 text-sky-500' : 'text-stone-300 hover:text-sky-400'}`} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="flex justify-between items-center mb-6">
-                    <p className="arabic-text text-3xl md:text-4xl text-sky-900 text-right leading-[2] md:leading-[2] opacity-90 flex-1">{hadith.arabic}</p>
+                    <p className="arabic-text text-4xl md:text-5xl text-sky-900 text-right leading-loose md:leading-loose opacity-90 flex-1 py-2">{hadith.arabic}</p>
                     <button 
                       onClick={() => speak(hadith.arabic!, 'ar-SA', `ar-${hadith.id}`)}
                       className={`p-2 rounded-full ml-4 transition-colors shrink-0 ${playingId === `ar-${hadith.id}` ? 'bg-sky-100 text-sky-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                      data-html2canvas-ignore="true"
                     >
                       <Volume2 className="w-5 h-5" />
                     </button>
@@ -1035,6 +1091,7 @@ export default function App() {
                       <button 
                         onClick={() => speak(hadith.french, 'fr-FR', `fr-${hadith.id}`)}
                         className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `fr-${hadith.id}` ? 'bg-sky-100 text-sky-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        data-html2canvas-ignore="true"
                       >
                         <Volume2 className="w-4 h-4" />
                       </button>
@@ -1047,6 +1104,7 @@ export default function App() {
                         <button 
                           onClick={() => speak(hadith.wolof!, 'fr-FR', `wo-${hadith.id}`)}
                           className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-${hadith.id}` ? 'bg-sky-100 text-sky-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                          data-html2canvas-ignore="true"
                         >
                           <Volume2 className="w-4 h-4" />
                         </button>
@@ -1074,12 +1132,22 @@ export default function App() {
               className="space-y-4"
             >
               {CONSEILS.map((conseil) => (
-                <div key={conseil.id} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="p-3 bg-indigo-50 rounded-2xl shrink-0">
-                      <Lightbulb className="w-6 h-6 text-indigo-600" />
+                <div key={conseil.id} id={`capture-conseil-${conseil.id}`} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300 relative">
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-indigo-50 rounded-2xl shrink-0">
+                        <Lightbulb className="w-6 h-6 text-indigo-600" />
+                      </div>
+                      <h3 className="font-serif font-bold text-stone-900 text-xl leading-tight">{conseil.title}</h3>
                     </div>
-                    <h3 className="font-serif font-bold text-stone-900 text-xl leading-tight">{conseil.title}</h3>
+                    <button 
+                      onClick={() => handleCapture(`capture-conseil-${conseil.id}`, `conseil-${conseil.id}`)} 
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-stone-50 transition-colors text-stone-300 hover:text-indigo-500 shrink-0"
+                      title="Capturer l'image"
+                      data-html2canvas-ignore="true"
+                    >
+                      <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </button>
                   </div>
                   
                   <div className="space-y-5">
@@ -1225,11 +1293,25 @@ export default function App() {
                     <div className="flex gap-3 items-start">
                       <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded uppercase mt-0.5">FR</span>
                       <p className="text-stone-700 text-base leading-relaxed flex-1 font-medium">{step.description}</p>
+                      <button 
+                        onClick={() => speak(step.description, 'fr-FR', `fr-petit-${index}`)}
+                        className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `fr-petit-${index}` ? 'bg-teal-100 text-teal-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        data-html2canvas-ignore="true"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                     </div>
                     
                     <div className="flex gap-3 items-start pt-3 border-t border-stone-100">
                       <span className="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
                       <p className="text-stone-700 text-base leading-relaxed flex-1 text-teal-900/90 font-medium">{step.wolof}</p>
+                      <button 
+                        onClick={() => speak(step.wolof, 'fr-FR', `wo-petit-${index}`)}
+                        className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-petit-${index}` ? 'bg-teal-100 text-teal-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        data-html2canvas-ignore="true"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1263,11 +1345,25 @@ export default function App() {
                     <div className="flex gap-3 items-start">
                       <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded uppercase mt-0.5">FR</span>
                       <p className="text-stone-700 text-base leading-relaxed flex-1 font-medium">{step.description}</p>
+                      <button 
+                        onClick={() => speak(step.description, 'fr-FR', `fr-grand-${index}`)}
+                        className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `fr-grand-${index}` ? 'bg-cyan-100 text-cyan-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        data-html2canvas-ignore="true"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                     </div>
                     
                     <div className="flex gap-3 items-start pt-3 border-t border-stone-100">
                       <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
                       <p className="text-stone-700 text-base leading-relaxed flex-1 text-cyan-900/90 font-medium">{step.wolof}</p>
+                      <button 
+                        onClick={() => speak(step.wolof, 'fr-FR', `wo-grand-${index}`)}
+                        className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-grand-${index}` ? 'bg-cyan-100 text-cyan-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        data-html2canvas-ignore="true"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </div>

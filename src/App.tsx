@@ -21,16 +21,20 @@ import {
   Lightbulb,
   Volume2,
   Droplets,
-  Camera
+  Camera,
+  Fingerprint
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as htmlToImage from 'html-to-image';
+import { AudioRecorder } from './components/AudioRecorder';
+import { Dhikr } from './components/Dhikr';
 
 // --- Types ---
 interface Doua {
   id: string;
   title: string;
   arabic: string;
+  phonetic?: string;
   french: string;
   wolof?: string;
   reporter?: string;
@@ -75,8 +79,53 @@ const WELCOME_QUOTES = [
   { text: "Certes, la prière préserve de la turpitude et du blâmable.", source: "Coran 29:45" }
 ];
 
+const normalizeStr = (str: string) => {
+  if (!str) return '';
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+};
+
 // --- Data ---
 const DOUAS: Doua[] = [
+  {
+    id: 'ihsan-1',
+    title: 'L’excellence dans l’adoration',
+    arabic: 'اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ',
+    phonetic: 'Allahumma a’inni ‘ala dhikrika wa shukrika wa husni ‘ibadatik',
+    french: 'Ô Allah, aide-moi à T’invoquer, à Te remercier, et à T’adorer avec excellence.',
+    category: 'daily'
+  },
+  {
+    id: 'ihsan-2',
+    title: 'La sincérité pure',
+    arabic: 'اللَّهُمَّ اجْعَلْ عَمَلِي كُلَّهُ صَالِحًا وَاجْعَلْهُ لِوَجْهِكَ خَالِصًا',
+    phonetic: 'Allahumma aj’al ‘amali kullahu salihan waj’alhu li wajhika khalisan',
+    french: 'Ô Allah, rends toutes mes actions bonnes et fais-les uniquement pour Toi.',
+    category: 'invocation'
+  },
+  {
+    id: 'ihsan-3',
+    title: 'Le cœur présent',
+    arabic: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي',
+    phonetic: 'Rabbi ishrah li sadri wa yassir li amri',
+    french: 'Seigneur, ouvre-moi ma poitrine et facilite-moi ma tâche.',
+    category: 'invocation'
+  },
+  {
+    id: 'ihsan-4',
+    title: 'La piété quotidienne',
+    arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى',
+    phonetic: 'Allahumma inni as’aluka al-huda wa at-tuqa wal-‘afafa wal-ghina',
+    french: 'Ô Allah, je Te demande la guidance, la piété, la chasteté et l’indépendance.',
+    category: 'daily'
+  },
+  {
+    id: 'ihsan-5',
+    title: 'La belle part',
+    arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
+    phonetic: 'Rabbana atina fi d-dunya hasanatan wa fi al-akhirati hasanatan wa qina ‘adhaba an-nar',
+    french: 'Seigneur, accorde-nous le bien ici-bas et le bien dans l’au-delà, et protège-nous du feu.',
+    category: 'invocation'
+  },
   {
     id: '1',
     title: 'Invocation du matin',
@@ -667,15 +716,18 @@ const Card = ({ children, onClick, className = "", style }: { children: React.Re
 );
 
 export default function App() {
-  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'conseils' | 'help' | 'ablutions_petit' | 'ablutions_grand'>('welcome');
+  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'conseils' | 'dhikr' | 'help' | 'ablutions_petit' | 'ablutions_grand'>('welcome');
   const [douaFilter, setDouaFilter] = useState<'all' | 'favorites' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport'>('all');
   const [hadithFilter, setHadithFilter] = useState<'all' | 'favorites'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [welcomeQuote, setWelcomeQuote] = useState(WELCOME_QUOTES[0]);
   const [donationTarget, setDonationTarget] = useState<{name: string, number: string} | null>(null);
   const [donationAmount, setDonationAmount] = useState('');
+  const [secretCode, setSecretCode] = useState('');
   const [copied, setCopied] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState<string | null>(null);
+  const [notifPerm, setNotifPerm] = useState<string>('Notification' in window ? Notification.permission : 'denied');
 
   const handleCapture = (id: string, fileName: string) => {
     setIsCapturing(id);
@@ -710,15 +762,36 @@ export default function App() {
 
   const speak = (text: string, lang: string, id: string) => {
     if ('speechSynthesis' in window) {
+      if (playingId === id) {
+        window.speechSynthesis.cancel();
+        setPlayingId(null);
+        return;
+      }
+      
       window.speechSynthesis.cancel();
+      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = lang;
       
-      utterance.onstart = () => setPlayingId(id);
+      // Load voices immediately in case they are ready
+      let voices = window.speechSynthesis.getVoices();
+      let voice = voices.find(v => v.lang.startsWith(lang) || v.lang.startsWith(lang.substring(0, 2)));
+      if (voice) {
+        utterance.voice = voice;
+      }
+
+      utterance.onstart = () => {
+        setPlayingId(id);
+      };
       utterance.onend = () => setPlayingId(null);
-      utterance.onerror = () => setPlayingId(null);
+      utterance.onerror = (e) => {
+          console.error("Speech error", e);
+          setPlayingId(null);
+      };
       
       window.speechSynthesis.speak(utterance);
+    } else {
+      alert("Votre navigateur ne supporte pas la lecture audio.");
     }
   };
 
@@ -746,6 +819,30 @@ export default function App() {
     // Select a random quote on component mount
     const randomIndex = Math.floor(Math.random() * WELCOME_QUOTES.length);
     setWelcomeQuote(WELCOME_QUOTES[randomIndex]);
+
+    // Service Worker & Notifications
+    if ('serviceWorker' in navigator && 'Notification' in window) {
+      navigator.serviceWorker.register('/sw.js').then((reg) => {
+        // Show daily dua if not shown today and permission is granted
+        if (Notification.permission === 'granted') {
+          const lastDate = localStorage.getItem('alihsan-last-notif-date');
+          const today = new Date().toDateString();
+          
+          if (lastDate !== today) {
+            // Schedule or show locally if possible. Wait a bit to not spam on open.
+            setTimeout(() => {
+              const randomDua = DOUAS[Math.floor(Math.random() * DOUAS.length)];
+              reg.showNotification("Dua du jour", {
+                body: randomDua.french,
+                icon: '/icon.jpg',
+                badge: '/icon.jpg'
+              });
+              localStorage.setItem('alihsan-last-notif-date', today);
+            }, 5000);
+          }
+        }
+      }).catch((error) => console.log('SW registration failed:', error));
+    }
   }, []);
 
   const openWhatsApp = (number: string, name: string) => {
@@ -756,6 +853,10 @@ export default function App() {
   const makeCall = (number: string) => {
     window.open(`tel:${number.replace(/\s+/g, '')}`, '_self');
   };
+
+  useEffect(() => {
+    setSearchQuery('');
+  }, [view]);
 
   if (view === 'welcome') {
     return (
@@ -837,6 +938,7 @@ export default function App() {
           {view === 'douas' && "Douas & Invocations"}
           {view === 'hadiths' && "Hadiths & Sagesses"}
           {view === 'conseils' && "Conseils Religieux"}
+          {view === 'dhikr' && "Dhikr & Tasbih"}
           {view === 'help' && "Besoin d'aide"}
           {view === 'ablutions_petit' && "Petites Ablutions"}
           {view === 'ablutions_grand' && "Grandes Ablutions"}
@@ -919,15 +1021,37 @@ export default function App() {
               </Card>
 
               <Card onClick={() => setView('help')} className="col-span-2 flex items-center gap-5 p-5 bg-white border border-stone-200 hover:border-amber-200 shadow-sm">
-                <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center">
+                <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center shrink-0">
                   <HandHelping className="text-amber-600 w-7 h-7" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-bold text-stone-800 text-lg">Besoin d'aide ?</h3>
                   <p className="text-sm text-stone-500 font-medium">Contacter un Oustaz</p>
                 </div>
-                <ChevronRight className="text-stone-300 w-5 h-5 opacity-50" />
+                <ChevronRight className="text-stone-300 w-5 h-5 opacity-50 shrink-0" />
               </Card>
+
+              {notifPerm === 'default' && (
+                <Card 
+                  onClick={() => {
+                    Notification.requestPermission().then(permission => {
+                      setNotifPerm(permission);
+                      if (permission === 'granted') {
+                        alert("Notifications activées avec succès !");
+                      }
+                    });
+                  }} 
+                  className="col-span-2 flex items-center gap-5 p-5 bg-gradient-to-r from-stone-50 to-stone-100 border border-stone-200 cursor-pointer hover:border-emerald-300 shadow-sm transition-all"
+                >
+                  <div className="w-14 h-14 bg-white shadow-sm border border-stone-100 rounded-2xl flex items-center justify-center shrink-0">
+                    <span className="text-2xl">🔔</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-stone-800 text-lg">Activer les rappels</h3>
+                    <p className="text-sm text-stone-500 font-medium">Recevoir une invocation par jour</p>
+                  </div>
+                </Card>
+              )}
             </motion.div>
           )}
 
@@ -938,6 +1062,21 @@ export default function App() {
               animate={{ opacity: 1, x: 0 }}
               className="space-y-4"
             >
+              <div className="relative mb-4">
+                <input
+                  type="text"
+                  placeholder="Rechercher une doua (français, phonétique, arabe)..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-4 pr-10 py-3 rounded-2xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-stone-700 bg-white shadow-sm"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
+                    <span className="text-xl leading-none">&times;</span>
+                  </button>
+                )}
+              </div>
+
               <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
                 {['all', 'favorites', 'daily', 'protection', 'invocation', 'lieux', 'transport', 'etudes'].map((f) => (
                   <button
@@ -952,7 +1091,16 @@ export default function App() {
                 ))}
               </div>
 
-              {DOUAS.filter(d => d.category !== 'hadith' && (douaFilter === 'all' || (douaFilter === 'favorites' ? favorites.includes(d.id) : d.category === douaFilter))).map((doua) => (
+              {DOUAS.filter(d => 
+                d.category !== 'hadith' && 
+                (douaFilter === 'all' || (douaFilter === 'favorites' ? favorites.includes(d.id) : d.category === douaFilter)) &&
+                (searchQuery === '' || 
+                  normalizeStr(d.title).includes(normalizeStr(searchQuery)) ||
+                  normalizeStr(d.french).includes(normalizeStr(searchQuery)) ||
+                  (d.phonetic && normalizeStr(d.phonetic).includes(normalizeStr(searchQuery))) ||
+                  d.arabic.includes(searchQuery)
+                )
+              ).map((doua) => (
                 <div key={doua.id} id={`capture-doua-${doua.id}`} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300 relative">
                   <div className="flex justify-between items-start mb-6">
                     <h3 className="font-serif font-bold text-xl text-emerald-950 pr-2">{doua.title}</h3>
@@ -990,6 +1138,12 @@ export default function App() {
                   <div className="h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent mb-6" />
                   
                   <div className="space-y-4">
+                    {doua.phonetic && (
+                      <div className="flex gap-3 items-start">
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded uppercase mt-0.5">PH</span>
+                        <p className="text-stone-600 text-sm md:text-base leading-relaxed flex-1 italic text-emerald-800 font-medium">{doua.phonetic}</p>
+                      </div>
+                    )}
                     <div className="flex gap-3 items-start">
                       <span className="text-[10px] font-bold text-stone-400 bg-stone-100 px-2 py-1 rounded uppercase mt-0.5">FR</span>
                       <p className="text-stone-600 text-sm md:text-base leading-relaxed flex-1 font-medium">"{doua.french}"</p>
@@ -1016,11 +1170,20 @@ export default function App() {
                       </div>
                     )}
 
-                    {doua.reporter && (
-                      <div className="pt-3 mt-4 border-t border-stone-50">
+                    <div className="pt-3 mt-4 border-t border-stone-50 flex items-center justify-between">
+                      <AudioRecorder id={doua.id} />
+                      {doua.reporter && (
                         <p className="text-[11px] font-medium text-stone-400 uppercase tracking-wider text-right">
                           {doua.reporter}
                         </p>
+                      )}
+                    </div>
+                    {isCapturing === `capture-doua-${doua.id}` && (
+                      <div className="pt-4 mt-6 border-t border-stone-100 flex justify-center items-center w-full">
+                        <span className="text-[11px] font-bold text-stone-400 tracking-widest flex items-center gap-2 uppercase">
+                          <Heart className="w-3 h-3 text-emerald-500 fill-emerald-500" />
+                          alihsan.app
+                        </span>
                       </div>
                     )}
                   </div>
@@ -1036,6 +1199,21 @@ export default function App() {
               animate={{ opacity: 1, x: 0 }}
               className="space-y-4"
             >
+              <div className="relative mb-4">
+                <input
+                  type="text"
+                  placeholder="Rechercher un hadith..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-4 pr-10 py-3 rounded-2xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all text-stone-700 bg-white shadow-sm"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
+                    <span className="text-xl leading-none">&times;</span>
+                  </button>
+                )}
+              </div>
+
               <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
                 {['all', 'favorites'].map((f) => (
                   <button
@@ -1050,7 +1228,16 @@ export default function App() {
                 ))}
               </div>
 
-              {DOUAS.filter(d => d.category === 'hadith' && (hadithFilter === 'all' || favorites.includes(d.id))).map((hadith) => (
+              {DOUAS.filter(d => 
+                d.category === 'hadith' && 
+                (hadithFilter === 'all' || favorites.includes(d.id)) &&
+                (searchQuery === '' || 
+                  normalizeStr(d.title).includes(normalizeStr(searchQuery)) ||
+                  normalizeStr(d.french).includes(normalizeStr(searchQuery)) ||
+                  (d.phonetic && normalizeStr(d.phonetic).includes(normalizeStr(searchQuery))) ||
+                  d.arabic.includes(searchQuery)
+                )
+              ).map((hadith) => (
                 <div key={hadith.id} id={`capture-hadith-${hadith.id}`} className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300 relative">
                   <div className="flex justify-between items-start mb-6">
                     <h3 className="font-serif font-bold text-xl text-sky-950 pr-2">{hadith.title}</h3>
@@ -1111,11 +1298,20 @@ export default function App() {
                       </div>
                     )}
 
-                    {hadith.reporter && (
-                      <div className="pt-3 mt-4 border-t border-stone-50">
+                    <div className="pt-3 mt-4 border-t border-stone-50 flex items-center justify-between">
+                      <AudioRecorder id={hadith.id} />
+                      {hadith.reporter && (
                         <p className="text-[11px] font-medium text-stone-400 uppercase tracking-wider text-right">
                           {hadith.reporter}
                         </p>
+                      )}
+                    </div>
+                    {isCapturing === `capture-hadith-${hadith.id}` && (
+                      <div className="pt-4 mt-6 border-t border-stone-100 flex justify-center items-center w-full">
+                        <span className="text-[11px] font-bold text-stone-400 tracking-widest flex items-center gap-2 uppercase">
+                          <Heart className="w-3 h-3 text-sky-500 fill-sky-500" />
+                          alihsan.app
+                        </span>
                       </div>
                     )}
                   </div>
@@ -1160,9 +1356,28 @@ export default function App() {
                       <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
                       <p className="text-stone-700 text-base leading-relaxed flex-1 text-indigo-900/90 font-medium">{conseil.wolof}</p>
                     </div>
+                    {isCapturing === `capture-conseil-${conseil.id}` && (
+                      <div className="pt-4 mt-6 border-t border-stone-100 flex justify-center items-center w-full">
+                        <span className="text-[11px] font-bold text-stone-400 tracking-widest flex items-center gap-2 uppercase">
+                          <Heart className="w-3 h-3 text-indigo-500 fill-indigo-500" />
+                          alihsan.app
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
+            </motion.div>
+          )}
+
+          {view === 'dhikr' && (
+            <motion.div 
+              key="dhikr"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+            >
+              <Dhikr />
             </motion.div>
           )}
 
@@ -1374,24 +1589,28 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 px-3 py-3 flex justify-between items-center z-10">
-        <button onClick={() => setView('home')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'home' ? 'text-emerald-600' : 'text-stone-400'}`}>
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 px-2 py-3 flex justify-between items-center z-10">
+        <button onClick={() => setView('home')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'home' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Guide</span>
         </button>
-        <button onClick={() => setView('douas')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'douas' ? 'text-emerald-600' : 'text-stone-400'}`}>
+        <button onClick={() => setView('douas')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'douas' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Douas</span>
         </button>
-        <button onClick={() => setView('hadiths')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'hadiths' ? 'text-emerald-600' : 'text-stone-400'}`}>
+        <button onClick={() => setView('hadiths')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'hadiths' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <Quote className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Hadiths</span>
         </button>
-        <button onClick={() => setView('conseils')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'conseils' ? 'text-emerald-600' : 'text-stone-400'}`}>
+        <button onClick={() => setView('dhikr')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'dhikr' ? 'text-emerald-600' : 'text-stone-400'}`}>
+          <Fingerprint className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Dhikr</span>
+        </button>
+        <button onClick={() => setView('conseils')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'conseils' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Conseils</span>
         </button>
-        <button onClick={() => setView('help')} className={`flex flex-col items-center gap-1 w-1/5 ${view === 'help' ? 'text-emerald-600' : 'text-stone-400'}`}>
+        <button onClick={() => setView('help')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'help' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <HandHelping className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Aide</span>
         </button>
@@ -1437,6 +1656,14 @@ export default function App() {
                     value={donationAmount}
                     onChange={(e) => setDonationAmount(e.target.value)}
                     placeholder="Saisir le montant"
+                    className="w-full text-center bg-white border border-stone-200 rounded-xl py-3 text-xl font-bold text-stone-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all placeholder:font-normal placeholder:text-stone-300 mb-4"
+                  />
+                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block mb-2">Code secret (Pour USSD Orange)</span>
+                  <input 
+                    type="password"
+                    value={secretCode}
+                    onChange={(e) => setSecretCode(e.target.value)}
+                    placeholder="****"
                     className="w-full text-center bg-white border border-stone-200 rounded-xl py-3 text-xl font-bold text-stone-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all placeholder:font-normal placeholder:text-stone-300"
                   />
                 </div>
@@ -1487,12 +1714,17 @@ export default function App() {
                     onClick={() => {
                       const number = donationTarget.number.replace(/\s+/g, '');
                       const localNumber = number.startsWith('+221') ? number.slice(4) : number.startsWith('221') ? number.slice(3) : number;
-                      window.location.href = `tel:*144*1*1*${localNumber}*${donationAmount}#`;
+                      // Encode # as %23 for the URL
+                      if (secretCode) {
+                        window.location.href = `tel:%23144%231*1*${localNumber}*${donationAmount}*${secretCode}%23`;
+                      } else {
+                        window.location.href = `tel:%23144%231*1*${localNumber}*${donationAmount}%23`;
+                      }
                     }}
-                    disabled={!donationAmount}
+                    disabled={!donationAmount || !secretCode}
                     className="bg-white border border-[#FFD9B8] rounded-xl py-3 flex flex-col items-center justify-center hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed shadow-sm"
                   >
-                    <span className="font-bold text-[#FF6600] text-sm leading-none">Fais le don (USSD)</span>
+                    <span className="font-bold text-[#FF6600] text-sm leading-none flex flex-col items-center gap-1"><span>Fais le don (USSD)</span><span className="text-[9px] font-normal opacity-80">(Nécessite Code)</span></span>
                   </button>
                 </div>
               </div>

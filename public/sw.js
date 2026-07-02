@@ -25,6 +25,15 @@ self.addEventListener('push', (event) => {
   );
 });
 
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      // Very basic cache-first or network fallback
+      return response || fetch(event.request).catch(() => new Response("Offline"));
+    })
+  );
+});
+
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(

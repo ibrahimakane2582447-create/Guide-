@@ -1,6 +1,6 @@
 {
   "name": "Guide Muslim Al-Ihsan",
   "description": "Un recueil quotidien de douas et d'invocations pour chaque instant de la vie, avec un accès rapide à l'assistance religieuse.",
-  "requestFramePermissions": ["microphone"],
+  "requestFramePermissions": ["microphone", "geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

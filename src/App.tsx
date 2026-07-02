@@ -22,12 +22,17 @@ import {
   Volume2,
   Droplets,
   Camera,
-  Fingerprint
+  Fingerprint,
+  Star,
+  Clock,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as htmlToImage from 'html-to-image';
 import { AudioRecorder } from './components/AudioRecorder';
 import { Dhikr } from './components/Dhikr';
+import { PrayersAndAlarms } from './components/PrayersAndAlarms';
 
 // --- Types ---
 interface Doua {
@@ -92,6 +97,7 @@ const DOUAS: Doua[] = [
     arabic: 'اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ',
     phonetic: 'Allahumma a’inni ‘ala dhikrika wa shukrika wa husni ‘ibadatik',
     french: 'Ô Allah, aide-moi à T’invoquer, à Te remercier, et à T’adorer avec excellence.',
+    wolof: 'Yaw Yàlla, dimbali ma ci ma man laa tudd, di la sant, te jaamu la ni mu gën a rafeté.',
     category: 'daily'
   },
   {
@@ -100,6 +106,7 @@ const DOUAS: Doua[] = [
     arabic: 'اللَّهُمَّ اجْعَلْ عَمَلِي كُلَّهُ صَالِحًا وَاجْعَلْهُ لِوَجْهِكَ خَالِصًا',
     phonetic: 'Allahumma aj’al ‘amali kullahu salihan waj’alhu li wajhika khalisan',
     french: 'Ô Allah, rends toutes mes actions bonnes et fais-les uniquement pour Toi.',
+    wolof: 'Yaw Yàlla, defal sama jëf yépp ñu nekk yu baax te mu nekk lo xam ne yaw rekk a tax.',
     category: 'invocation'
   },
   {
@@ -108,6 +115,7 @@ const DOUAS: Doua[] = [
     arabic: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي',
     phonetic: 'Rabbi ishrah li sadri wa yassir li amri',
     french: 'Seigneur, ouvre-moi ma poitrine et facilite-moi ma tâche.',
+    wolof: 'Sama Boroom, ubbil ma sama dënn te yombalal ma sama mbir.',
     category: 'invocation'
   },
   {
@@ -116,6 +124,7 @@ const DOUAS: Doua[] = [
     arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى',
     phonetic: 'Allahumma inni as’aluka al-huda wa at-tuqa wal-‘afafa wal-ghina',
     french: 'Ô Allah, je Te demande la guidance, la piété, la chasteté et l’indépendance.',
+    wolof: 'Yaw Yàlla, maa ngi lay ñaan njub, ragal-Yàlla, selaal ak wërsëg.',
     category: 'daily'
   },
   {
@@ -124,6 +133,7 @@ const DOUAS: Doua[] = [
     arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
     phonetic: 'Rabbana atina fi d-dunya hasanatan wa fi al-akhirati hasanatan wa qina ‘adhaba an-nar',
     french: 'Seigneur, accorde-nous le bien ici-bas et le bien dans l’au-delà, et protège-nous du feu.',
+    wolof: 'Sama Boroom, may nu yiw ci àddina ak yiw ci àllaaxira, te musal nu ci mbugalum safara.',
     category: 'invocation'
   },
   {
@@ -703,8 +713,9 @@ const CONSEILS: Conseil[] = [
 
 // --- Components ---
 
-const Card = ({ children, onClick, className = "", style }: { children: React.ReactNode, onClick?: () => void, className?: string, style?: React.CSSProperties }) => (
+const Card = ({ children, onClick, className = "", style, id }: { children: React.ReactNode, onClick?: () => void, className?: string, style?: React.CSSProperties, id?: string }) => (
   <motion.div 
+    id={id}
     whileTap={{ scale: 0.97 }}
     whileHover={{ y: -2 }}
     onClick={onClick}
@@ -716,18 +727,132 @@ const Card = ({ children, onClick, className = "", style }: { children: React.Re
 );
 
 export default function App() {
-  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'conseils' | 'dhikr' | 'help' | 'ablutions_petit' | 'ablutions_grand'>('welcome');
+  const [view, setView] = useState<'welcome' | 'home' | 'douas' | 'hadiths' | 'conseils' | 'dhikr' | 'help' | 'ablutions_petit' | 'ablutions_grand' | 'prieres'>('welcome');
   const [douaFilter, setDouaFilter] = useState<'all' | 'favorites' | 'daily' | 'protection' | 'invocation' | 'lieux' | 'etudes' | 'transport'>('all');
   const [hadithFilter, setHadithFilter] = useState<'all' | 'favorites'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [welcomeQuote, setWelcomeQuote] = useState(WELCOME_QUOTES[0]);
   const [donationTarget, setDonationTarget] = useState<{name: string, number: string} | null>(null);
   const [donationAmount, setDonationAmount] = useState('');
-  const [secretCode, setSecretCode] = useState('');
   const [copied, setCopied] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState<string | null>(null);
   const [notifPerm, setNotifPerm] = useState<string>('Notification' in window ? Notification.permission : 'denied');
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [duaOfTheDay, setDuaOfTheDay] = useState(DOUAS[0]);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('alihsan-dark-mode') === 'true';
+  });
+
+  const [audioUnlocked, setAudioUnlocked] = useState(false);
+
+  const unlockAudio = () => {
+    if (audioUnlocked) return;
+    const audio = document.getElementById('adhan-notification-audio') as HTMLAudioElement;
+    if (audio) {
+      // If audio is already playing (e.g. from user clicking the preview button directly), 
+      // we consider it unlocked and avoid pausing it.
+      if (!audio.paused) {
+        setAudioUnlocked(true);
+        return;
+      }
+      audio.play().then(() => {
+        if (!audio.paused) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+        setAudioUnlocked(true);
+        console.log("Audio successfully unlocked for background use.");
+      }).catch(e => {
+        console.log("Audio unlock failed/requires direct user gesture:", e);
+      });
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem('alihsan-dark-mode', String(isDarkMode));
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    const today = new Date();
+    const index = Math.abs(today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()) % DOUAS.length;
+    setDuaOfTheDay(DOUAS[index]);
+  }, []);
+
+  useEffect(() => {
+    let lastCheckedTime = '';
+
+    const checkPrayers = () => {
+      const now = new Date();
+      const currentHours = now.getHours().toString().padStart(2, '0');
+      const currentMinutes = now.getMinutes().toString().padStart(2, '0');
+      const currentTime = `${currentHours}:${currentMinutes}`;
+      
+      // Ensure we only trigger once per minute
+      if (currentTime === lastCheckedTime) return;
+      
+      // Check every 5 seconds, if the minute changed, proceed
+      const currentSeconds = now.getSeconds();
+      if (currentSeconds > 10) return;
+
+      lastCheckedTime = currentTime;
+
+      let shouldVibrate = false;
+
+      // Check Prayer Times
+      try {
+        const prayerTimesStr = localStorage.getItem('alihsan-prayer-times');
+        if (prayerTimesStr) {
+          const prayerTimes = JSON.parse(prayerTimesStr);
+          const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+          const currentPrayer = prayerNames.find(key => prayerTimes[key] === currentTime);
+          
+          if (currentPrayer) {
+            shouldVibrate = true;
+            const wolofNames: Record<string, string> = { Fajr: 'Souba', Dhuhr: 'Tisbar', Asr: 'Takusan', Maghrib: 'Timis', Isha: 'Gueewe' };
+            
+            if (Notification.permission === 'granted') {
+              new Notification(`Heure de prière : ${wolofNames[currentPrayer]}`, {
+                body: "C'est l'heure de l'appel à la prière (Adhan de Bilal de Médine).",
+                icon: '/icon.jpg'
+              });
+            }
+
+            // Try playing preloaded audio element (unlocked by user gesture)
+            const audioEl = document.getElementById('adhan-notification-audio') as HTMLAudioElement;
+            if (audioEl) {
+              audioEl.currentTime = 0;
+              audioEl.play()
+                .then(() => {
+                  console.log("Adhan played successfully in background!");
+                })
+                .catch((err) => {
+                  console.log("Failed playing background adhan, falling back to TTS:", err);
+                  // Text-to-speech fallback which is usually allowed on some background flows
+                  if ('speechSynthesis' in window) {
+                    const msg = new SpeechSynthesisUtterance(`C'est l'heure de la prière de ${wolofNames[currentPrayer]}. Al l'appel à la prière.`);
+                    msg.lang = 'fr';
+                    window.speechSynthesis.speak(msg);
+                  }
+                });
+            }
+          }
+        }
+      } catch (e) {}
+
+      if (shouldVibrate && 'vibrate' in navigator) {
+        navigator.vibrate([500, 500, 500]);
+      }
+    };
+
+    const interval = setInterval(checkPrayers, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCapture = (id: string, fileName: string) => {
     setIsCapturing(id);
@@ -762,6 +887,10 @@ export default function App() {
 
   const speak = (text: string, lang: string, id: string) => {
     if ('speechSynthesis' in window) {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+
       if (playingId === id) {
         window.speechSynthesis.cancel();
         setPlayingId(null);
@@ -769,27 +898,72 @@ export default function App() {
       }
       
       window.speechSynthesis.cancel();
-      
-      const utterance = new SpeechSynthesisUtterance(text);
+
+      // Clean up text to prevent pronunciation errors on brackets and islamic abbreviations
+      const cleanTextForSpeech = (rawText: string, isAr: boolean): string => {
+        let txt = rawText
+          // Remove html tags if any
+          .replace(/<[^>]*>/g, '')
+          // Remove brackets [1], [2], [A] etc.
+          .replace(/\[\d+\]/g, '')
+          .replace(/\[[^\]]+\]/g, '');
+
+        if (isAr) {
+          // Arabic cleanup
+          txt = txt
+            // Remove parenthesized abbreviations that break rhythm
+            .replace(/\((صلى الله عليه وسلم|صلعم|رضي الله عنه|عليه السلام)\)/g, '')
+            // Keep mostly Arabic characters, spaces and standard punctuation for natural speech flow
+            .replace(/[^\u0621-\u064A\u0660-\u0669\s\.\,،]/g, ' ')
+            .replace(/\s+/g, ' ');
+        } else {
+          // French cleanup
+          txt = txt
+            // Remove common parenthesized Islamic abbreviations like (saw), (sws), (as), (ra) which confuse TTS
+            .replace(/\((saw|sws|pbuh|psl|ra|as|qt|swt|mas)\)/gi, '')
+            .replace(/[\(\)]/g, ' ')
+            .replace(/\s+/g, ' ');
+        }
+        return txt.trim();
+      };
+
+      const cleanedText = cleanTextForSpeech(text, lang.startsWith('ar'));
+      const utterance = new SpeechSynthesisUtterance(cleanedText);
       utterance.lang = lang;
       
-      // Load voices immediately in case they are ready
       let voices = window.speechSynthesis.getVoices();
-      let voice = voices.find(v => v.lang.startsWith(lang) || v.lang.startsWith(lang.substring(0, 2)));
+      let voice;
+      
+      if (lang.startsWith('ar')) {
+          utterance.rate = 0.92; // Optimized natural reading speed for Arabic (faster as requested)
+          utterance.pitch = 0.95;
+          // Try to find premium Arabic voice
+          voice = voices.find(v => v.lang.startsWith('ar') && (v.name.toLowerCase().includes('maged') || v.name.toLowerCase().includes('tarik') || v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('natural')));
+          if (!voice) voice = voices.find(v => v.lang.startsWith('ar'));
+      } else { // French
+          utterance.rate = 1.05; // Slightly faster and more energetic French reading speed
+          utterance.pitch = 1.0;
+          voice = voices.find(v => v.lang.startsWith('fr') && (v.name.toLowerCase().includes('thomas') || v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('audrey')));
+          if (!voice) voice = voices.find(v => v.lang.startsWith('fr'));
+      }
+      
       if (voice) {
         utterance.voice = voice;
       }
 
-      utterance.onstart = () => {
-        setPlayingId(id);
-      };
+      utterance.onstart = () => setPlayingId(id);
       utterance.onend = () => setPlayingId(null);
       utterance.onerror = (e) => {
-          console.error("Speech error", e);
+          console.warn("Speech synthesis status change:", e.error || "ended/interrupted");
           setPlayingId(null);
       };
       
-      window.speechSynthesis.speak(utterance);
+      try {
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.warn("Speech synthesis execution blocked or failed:", err);
+        setPlayingId(null);
+      }
     } else {
       alert("Votre navigateur ne supporte pas la lecture audio.");
     }
@@ -843,6 +1017,17 @@ export default function App() {
         }
       }).catch((error) => console.log('SW registration failed:', error));
     }
+
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
 
   const openWhatsApp = (number: string, name: string) => {
@@ -858,72 +1043,69 @@ export default function App() {
     setSearchQuery('');
   }, [view]);
 
-  if (view === 'welcome') {
-    return (
-      <div 
-        className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6 text-center pattern-bg relative overflow-hidden"
-        onContextMenu={(e) => e.preventDefault()}
-        onCopy={(e) => e.preventDefault()}
-      >
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-stone-50/50 via-transparent to-stone-50 pointer-events-none" />
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-md w-full relative z-10"
-        >
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="w-24 h-24 bg-emerald-700 rounded-3xl rotate-3 flex items-center justify-center mx-auto mb-10 shadow-2xl shadow-emerald-900/20"
-          >
-            <Heart className="text-emerald-50 w-10 h-10 -rotate-3" />
-          </motion.div>
-          <motion.h1 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-4xl font-serif font-bold text-stone-900 mb-6"
-          >
-            Al-Ihsan
-          </motion.h1>
-          
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6 }}
-            className="bg-white/80 backdrop-blur-md rounded-3xl p-8 mb-12 shadow-xl shadow-stone-200/50 border border-white"
-          >
-            <h2 className="text-stone-800 font-serif text-xl italic mb-3 leading-relaxed">
-              "{welcomeQuote.text}"
-            </h2>
-            <div className="w-12 h-0.5 bg-emerald-200 mx-auto mb-3" />
-            <p className="text-xs uppercase tracking-widest font-bold text-emerald-700">
-              {welcomeQuote.source}
-            </p>
-          </motion.div>
-          
-          <motion.button 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            onClick={() => setView('home')}
-            className="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-stone-900/20 hover:bg-stone-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-          >
-            Ouvrir mon guide
-          </motion.button>
-        </motion.div>
-      </div>
-    );
-  }
-
   return (
     <div 
-      className="min-h-screen bg-stone-50 pb-24"
+      className="min-h-screen bg-stone-50"
       onContextMenu={(e) => e.preventDefault()}
       onCopy={(e) => e.preventDefault()}
+      onClick={unlockAudio}
     >
+      {view === 'welcome' ? (
+        <div 
+          className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6 text-center pattern-bg relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-stone-50/50 via-transparent to-stone-50 pointer-events-none" />
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="max-w-md w-full relative z-10"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="w-24 h-24 bg-emerald-700 rounded-3xl rotate-3 flex items-center justify-center mx-auto mb-10 shadow-2xl shadow-emerald-900/20"
+            >
+              <Heart className="text-emerald-50 w-10 h-10 -rotate-3" />
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-4xl font-serif font-bold text-stone-900 mb-6"
+            >
+              Al-Ihsan
+            </motion.h1>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6 }}
+              className="bg-white/80 backdrop-blur-md rounded-3xl p-8 mb-12 shadow-xl shadow-stone-200/50 border border-white"
+            >
+              <h2 className="text-stone-800 font-serif text-xl italic mb-3 leading-relaxed">
+                "{welcomeQuote.text}"
+              </h2>
+              <div className="w-12 h-0.5 bg-emerald-200 mx-auto mb-3" />
+              <p className="text-xs uppercase tracking-widest font-bold text-emerald-700">
+                {welcomeQuote.source}
+              </p>
+            </motion.div>
+            
+            <motion.button 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              onClick={() => setView('home')}
+              className="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-stone-900/20 hover:bg-stone-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+            >
+              Ouvrir mon guide
+            </motion.button>
+          </motion.div>
+        </div>
+      ) : (
+        <div className="pb-24">
       {/* Header */}
       <header className="bg-white border-bottom border-stone-100 px-6 py-4 sticky top-0 z-10 flex items-center justify-between">
         {view !== 'home' ? (
@@ -939,11 +1121,23 @@ export default function App() {
           {view === 'hadiths' && "Hadiths & Sagesses"}
           {view === 'conseils' && "Conseils Religieux"}
           {view === 'dhikr' && "Dhikr & Tasbih"}
+          {view === 'prieres' && "Heures de Prières"}
           {view === 'help' && "Besoin d'aide"}
           {view === 'ablutions_petit' && "Petites Ablutions"}
           {view === 'ablutions_grand' && "Grandes Ablutions"}
         </h2>
-        <div className="w-10" />
+        <div className="flex items-center gap-1">
+          <button 
+            onClick={() => setIsDarkMode(!isDarkMode)} 
+            className="p-2 text-stone-400 hover:text-stone-600 transition-colors" 
+            title="Changer le thème"
+          >
+            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <button onClick={() => setView('help')} className="p-2 -mr-2 text-amber-500 hover:text-amber-600 transition-colors" title="Soutenir">
+            <HandHelping className="w-6 h-6" />
+          </button>
+        </div>
       </header>
 
       <main className="p-6 max-w-2xl mx-auto">
@@ -956,6 +1150,69 @@ export default function App() {
               exit={{ opacity: 0, y: -20 }}
               className="grid grid-cols-2 gap-4"
             >
+              <div className="col-span-2 mb-2">
+                <div className="flex items-center justify-between mb-4 px-1">
+                  <h3 className="text-lg font-bold text-stone-800 flex items-center gap-2">
+                    <Star className="w-5 h-5 text-emerald-600 fill-emerald-100" />
+                    Doua du jour
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full uppercase tracking-wider">Aujourd'hui</span>
+                    <button 
+                      onClick={() => handleCapture('capture-doua-jour', `doua-jour-${duaOfTheDay.id}`)} 
+                      className="p-1.5 rounded-full hover:bg-stone-100 transition-colors text-stone-400 hover:text-emerald-500"
+                      title="Capturer l'image"
+                      data-html2canvas-ignore="true"
+                    >
+                      <Camera className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+                <Card id="capture-doua-jour" className="bg-white border-stone-200 shadow-sm relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
+                  <div className="p-5">
+                    <p className="font-arabic text-xl leading-relaxed text-right mb-4 text-emerald-900" dir="rtl">
+                      {duaOfTheDay.arabic}
+                    </p>
+                    <p className="text-stone-600 text-sm font-medium mb-4 italic">
+                      "{duaOfTheDay.french}"
+                    </p>
+                    {duaOfTheDay.wolof && (
+                      <div className="pt-3 border-t border-stone-100 flex gap-3">
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded uppercase shrink-0 h-fit">WO</span>
+                        <p className="text-emerald-950 text-sm leading-relaxed font-semibold">
+                          "{duaOfTheDay.wolof}"
+                        </p>
+                      </div>
+                    )}
+                    <div className="mt-4 flex justify-end gap-2" data-html2canvas-ignore="true">
+                      <button 
+                        onClick={() => speak(duaOfTheDay.arabic!, 'ar-SA', `ar-daily-${duaOfTheDay.id}`)}
+                        className={`p-2 rounded-full transition-colors ${playingId === `ar-daily-${duaOfTheDay.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        title="Écouter en arabe"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => speak(duaOfTheDay.french, 'fr-FR', `fr-daily-${duaOfTheDay.id}`)}
+                        className={`p-2 rounded-full transition-colors ${playingId === `fr-daily-${duaOfTheDay.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
+                        title="Écouter en français"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    {isCapturing === 'capture-doua-jour' && (
+                      <div className="pt-4 mt-4 border-t border-stone-100 flex justify-center items-center w-full">
+                        <span className="text-[11px] font-bold text-stone-400 tracking-widest flex items-center gap-2 uppercase">
+                          <Heart className="w-3 h-3 text-emerald-500 fill-emerald-500" />
+                          alihsan.app
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </div>
+
               <Card onClick={() => setView('douas')} className="col-span-2 relative overflow-hidden bg-gradient-to-br from-emerald-800 to-emerald-950 min-h-[160px] border border-emerald-900 shadow-xl shadow-emerald-900/10">
                 <div className="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 bg-emerald-600 rounded-full mix-blend-multiply filter blur-2xl opacity-60"></div>
                 <div className="absolute bottom-0 left-0 -mb-6 -ml-6 w-24 h-24 bg-emerald-900 rounded-full mix-blend-multiply filter blur-xl opacity-60"></div>
@@ -1020,6 +1277,16 @@ export default function App() {
                 </div>
               </Card>
 
+              <Card onClick={() => setView('prieres')} className="col-span-2 flex flex-col justify-between p-5 min-h-[150px] bg-rose-50 shadow-sm border border-rose-100 group">
+                <div className="w-10 h-10 bg-white shadow-sm text-rose-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-800 text-lg">Heures de Prières</h3>
+                  <p className="text-xs text-stone-500 mt-1 font-medium">Horaires de prière locales</p>
+                </div>
+              </Card>
+
               <Card onClick={() => setView('help')} className="col-span-2 flex items-center gap-5 p-5 bg-white border border-stone-200 hover:border-amber-200 shadow-sm">
                 <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center shrink-0">
                   <HandHelping className="text-amber-600 w-7 h-7" />
@@ -1049,6 +1316,29 @@ export default function App() {
                   <div className="flex-1">
                     <h3 className="font-bold text-stone-800 text-lg">Activer les rappels</h3>
                     <p className="text-sm text-stone-500 font-medium">Recevoir une invocation par jour</p>
+                  </div>
+                </Card>
+              )}
+
+              {deferredPrompt && (
+                <Card 
+                  onClick={async () => {
+                    if (deferredPrompt) {
+                      deferredPrompt.prompt();
+                      const { outcome } = await deferredPrompt.userChoice;
+                      if (outcome === 'accepted') {
+                        setDeferredPrompt(null);
+                      }
+                    }
+                  }} 
+                  className="col-span-2 flex items-center gap-5 p-5 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 cursor-pointer hover:border-blue-400 shadow-sm transition-all"
+                >
+                  <div className="w-14 h-14 bg-white shadow-sm border border-blue-100 rounded-2xl flex items-center justify-center shrink-0">
+                    <span className="text-2xl">📱</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-blue-900 text-lg">Installer l'application</h3>
+                    <p className="text-sm text-blue-700 font-medium">Mode natif (sans navigateur)</p>
                   </div>
                 </Card>
               )}
@@ -1159,14 +1449,7 @@ export default function App() {
                     {doua.wolof && (
                       <div className="flex gap-3 items-start pt-2">
                         <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
-                        <p className="text-stone-600 text-sm md:text-base leading-relaxed flex-1 text-emerald-900 font-medium">"{doua.wolof}"</p>
-                        <button 
-                          onClick={() => speak(doua.wolof!, 'fr-FR', `wo-${doua.id}`)}
-                          className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-${doua.id}` ? 'bg-emerald-100 text-emerald-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
-                          data-html2canvas-ignore="true"
-                        >
-                          <Volume2 className="w-4 h-4" />
-                        </button>
+                        <p className="text-emerald-950 text-base md:text-lg leading-relaxed flex-1 font-semibold tracking-wide">"{doua.wolof}"</p>
                       </div>
                     )}
 
@@ -1287,14 +1570,7 @@ export default function App() {
                     {hadith.wolof && (
                       <div className="flex gap-3 items-start pt-2">
                         <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
-                        <p className="text-stone-600 text-sm md:text-base leading-relaxed flex-1 text-sky-900 font-medium">"{hadith.wolof}"</p>
-                        <button 
-                          onClick={() => speak(hadith.wolof!, 'fr-FR', `wo-${hadith.id}`)}
-                          className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-${hadith.id}` ? 'bg-sky-100 text-sky-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
-                          data-html2canvas-ignore="true"
-                        >
-                          <Volume2 className="w-4 h-4" />
-                        </button>
+                        <p className="text-sky-950 text-base md:text-lg leading-relaxed flex-1 font-semibold tracking-wide">"{hadith.wolof}"</p>
                       </div>
                     )}
 
@@ -1354,7 +1630,7 @@ export default function App() {
                     
                     <div className="flex gap-3 items-start pt-3 border-t border-stone-100">
                       <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
-                      <p className="text-stone-700 text-base leading-relaxed flex-1 text-indigo-900/90 font-medium">{conseil.wolof}</p>
+                      <p className="text-indigo-950 text-base md:text-lg leading-relaxed flex-1 font-semibold tracking-wide">{conseil.wolof}</p>
                     </div>
                     {isCapturing === `capture-conseil-${conseil.id}` && (
                       <div className="pt-4 mt-6 border-t border-stone-100 flex justify-center items-center w-full">
@@ -1378,6 +1654,17 @@ export default function App() {
               exit={{ opacity: 0, scale: 1.05 }}
             >
               <Dhikr />
+            </motion.div>
+          )}
+
+          {view === 'prieres' && (
+            <motion.div 
+              key="prieres"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+            >
+              <PrayersAndAlarms />
             </motion.div>
           )}
 
@@ -1411,13 +1698,6 @@ export default function App() {
                       <MessageCircle className="w-5 h-5" /> Message
                     </button>
                   </div>
-
-                  <button 
-                    onClick={() => setDonationTarget({ name: 'Développeur Ibrahima Kane', number: '+221 78 286 93 22' })}
-                    className="flex items-center justify-center gap-2 bg-amber-500 text-amber-950 py-3 md:py-4 rounded-2xl font-bold hover:bg-amber-400 transition-colors shadow-lg"
-                  >
-                    <Gift className="w-5 h-5" /> Soutenir le développeur
-                  </button>
                 </div>
               </div>
 
@@ -1442,13 +1722,6 @@ export default function App() {
                       <MessageCircle className="w-5 h-5" /> Message
                     </button>
                   </div>
-                  
-                  <button 
-                    onClick={() => setDonationTarget({ name: 'Oustaz Kane', number: '77 090 31 09' })}
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-amber-50 to-amber-100/50 text-amber-800 border border-amber-200 py-3 md:py-4 rounded-2xl font-bold hover:from-amber-100 hover:to-amber-100 transition-colors"
-                  >
-                    <Gift className="w-5 h-5" /> Faire un don (Soutien)
-                  </button>
                 </div>
               </div>
 
@@ -1471,15 +1744,17 @@ export default function App() {
                       <MessageCircle className="w-5 h-5" /> Message
                     </button>
                   </div>
-
-                  <button 
-                    onClick={() => setDonationTarget({ name: 'Oustaz Ciss', number: '+221 76 261 30 15' })}
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-amber-50 to-amber-100/50 text-amber-800 border border-amber-200 py-3 md:py-4 rounded-2xl font-bold hover:from-amber-100 hover:to-amber-100 transition-colors"
-                  >
-                    <Gift className="w-5 h-5" /> Faire un don (Soutien)
-                  </button>
                 </div>
               </div>
+
+              <div className="h-px bg-stone-200 my-8"></div>
+
+              <button 
+                onClick={() => setDonationTarget({ name: 'Les développeurs', number: '+221 78 286 93 22' })}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-50 to-amber-100/50 text-amber-800 border border-amber-200 py-4 rounded-2xl font-bold hover:from-amber-100 hover:to-amber-100 transition-colors"
+              >
+                <Gift className="w-5 h-5" /> Soutenir les développeurs
+              </button>
             </motion.div>
           )}
           {view === 'ablutions_petit' && (
@@ -1519,14 +1794,7 @@ export default function App() {
                     
                     <div className="flex gap-3 items-start pt-3 border-t border-stone-100">
                       <span className="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
-                      <p className="text-stone-700 text-base leading-relaxed flex-1 text-teal-900/90 font-medium">{step.wolof}</p>
-                      <button 
-                        onClick={() => speak(step.wolof, 'fr-FR', `wo-petit-${index}`)}
-                        className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-petit-${index}` ? 'bg-teal-100 text-teal-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
-                        data-html2canvas-ignore="true"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
+                      <p className="text-teal-950 text-base md:text-lg leading-relaxed flex-1 font-semibold tracking-wide">{step.wolof}</p>
                     </div>
                   </div>
                 </div>
@@ -1571,14 +1839,7 @@ export default function App() {
                     
                     <div className="flex gap-3 items-start pt-3 border-t border-stone-100">
                       <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 px-2 py-1 rounded uppercase mt-0.5">WO</span>
-                      <p className="text-stone-700 text-base leading-relaxed flex-1 text-cyan-900/90 font-medium">{step.wolof}</p>
-                      <button 
-                        onClick={() => speak(step.wolof, 'fr-FR', `wo-grand-${index}`)}
-                        className={`p-1.5 rounded-full transition-colors shrink-0 ${playingId === `wo-grand-${index}` ? 'bg-cyan-100 text-cyan-600' : 'bg-stone-50 text-stone-400 hover:bg-stone-100'}`}
-                        data-html2canvas-ignore="true"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
+                      <p className="text-cyan-950 text-base md:text-lg leading-relaxed flex-1 font-semibold tracking-wide">{step.wolof}</p>
                     </div>
                   </div>
                 </div>
@@ -1589,30 +1850,30 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 px-2 py-3 flex justify-between items-center z-10">
-        <button onClick={() => setView('home')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'home' ? 'text-emerald-600' : 'text-stone-400'}`}>
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-100 px-2 py-3 flex justify-between items-center z-10 overflow-x-auto no-scrollbar">
+        <button onClick={() => setView('home')} className={`flex flex-col items-center gap-1 min-w-[60px] flex-1 ${view === 'home' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Guide</span>
         </button>
-        <button onClick={() => setView('douas')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'douas' ? 'text-emerald-600' : 'text-stone-400'}`}>
+        <button onClick={() => setView('douas')} className={`flex flex-col items-center gap-1 min-w-[60px] flex-1 ${view === 'douas' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Douas</span>
         </button>
-        <button onClick={() => setView('hadiths')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'hadiths' ? 'text-emerald-600' : 'text-stone-400'}`}>
+        <button onClick={() => setView('hadiths')} className={`flex flex-col items-center gap-1 min-w-[60px] flex-1 ${view === 'hadiths' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <Quote className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Hadiths</span>
         </button>
-        <button onClick={() => setView('dhikr')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'dhikr' ? 'text-emerald-600' : 'text-stone-400'}`}>
+        <button onClick={() => setView('dhikr')} className={`flex flex-col items-center gap-1 min-w-[60px] flex-1 ${view === 'dhikr' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <Fingerprint className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Dhikr</span>
         </button>
-        <button onClick={() => setView('conseils')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'conseils' ? 'text-emerald-600' : 'text-stone-400'}`}>
+        <button onClick={() => setView('prieres')} className={`flex flex-col items-center gap-1 min-w-[60px] flex-1 ${view === 'prieres' ? 'text-emerald-600' : 'text-stone-400'}`}>
+          <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Prières</span>
+        </button>
+        <button onClick={() => setView('conseils')} className={`flex flex-col items-center gap-1 min-w-[60px] flex-1 ${view === 'conseils' ? 'text-emerald-600' : 'text-stone-400'}`}>
           <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Conseils</span>
-        </button>
-        <button onClick={() => setView('help')} className={`flex flex-col items-center gap-1 w-1/6 ${view === 'help' ? 'text-emerald-600' : 'text-stone-400'}`}>
-          <HandHelping className="w-5 h-5 sm:w-6 sm:h-6" />
-          <span className="text-[9px] sm:text-[10px] font-bold uppercase truncate w-full text-center">Aide</span>
         </button>
       </nav>
 
@@ -1656,14 +1917,6 @@ export default function App() {
                     value={donationAmount}
                     onChange={(e) => setDonationAmount(e.target.value)}
                     placeholder="Saisir le montant"
-                    className="w-full text-center bg-white border border-stone-200 rounded-xl py-3 text-xl font-bold text-stone-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all placeholder:font-normal placeholder:text-stone-300 mb-4"
-                  />
-                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block mb-2">Code secret (Pour USSD Orange)</span>
-                  <input 
-                    type="password"
-                    value={secretCode}
-                    onChange={(e) => setSecretCode(e.target.value)}
-                    placeholder="****"
                     className="w-full text-center bg-white border border-stone-200 rounded-xl py-3 text-xl font-bold text-stone-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all placeholder:font-normal placeholder:text-stone-300"
                   />
                 </div>
@@ -1714,17 +1967,13 @@ export default function App() {
                     onClick={() => {
                       const number = donationTarget.number.replace(/\s+/g, '');
                       const localNumber = number.startsWith('+221') ? number.slice(4) : number.startsWith('221') ? number.slice(3) : number;
-                      // Encode # as %23 for the URL
-                      if (secretCode) {
-                        window.location.href = `tel:%23144%231*1*${localNumber}*${donationAmount}*${secretCode}%23`;
-                      } else {
-                        window.location.href = `tel:%23144%231*1*${localNumber}*${donationAmount}%23`;
-                      }
+                      // En omettant le code secret, Orange Money affichera un menu USSD demandant de confirmer avec le code secret
+                      window.location.href = `tel:%23144%231*1*${localNumber}*${donationAmount}%23`;
                     }}
-                    disabled={!donationAmount || !secretCode}
+                    disabled={!donationAmount}
                     className="bg-white border border-[#FFD9B8] rounded-xl py-3 flex flex-col items-center justify-center hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed shadow-sm"
                   >
-                    <span className="font-bold text-[#FF6600] text-sm leading-none flex flex-col items-center gap-1"><span>Fais le don (USSD)</span><span className="text-[9px] font-normal opacity-80">(Nécessite Code)</span></span>
+                    <span className="font-bold text-[#FF6600] text-sm leading-none flex flex-col items-center gap-1"><span>Fais le don (USSD)</span></span>
                   </button>
                 </div>
               </div>
@@ -1746,6 +1995,15 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
+      )}
+
+      {/* Unlocked background notification audio with double format fallback */}
+      <audio id="adhan-notification-audio" preload="auto">
+        <source src="https://www.islamcan.com/audio/adhan/madina.mp3" type="audio/mpeg" />
+        <source src="https://www.islamcan.com/audio/adhan/makkah.mp3" type="audio/mpeg" />
+        <source src="https://upload.wikimedia.org/wikipedia/commons/c/c2/Adhan_Makkah.ogg" type="audio/ogg" />
+      </audio>
     </div>
   );
 }

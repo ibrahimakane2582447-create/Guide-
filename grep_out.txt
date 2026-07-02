@@ -1,0 +1,395 @@
+  wolof?: string;
+  reporter?: string;
+  category: 'protection' | 'invocation' | 'daily' | 'lieux' | 'etudes' | 'transport' | 'hadith';
+}
+
+--
+    french: 'Ô Allah, aide-moi à T’invoquer, à Te remercier, et à T’adorer avec excellence.',
+    wolof: 'Yaw Yàlla, dimbali ma ci ma man laa tudd, di la sant, te jaamu la ni mu gën a rafeté.',
+    category: 'daily'
+  },
+  {
+--
+    french: 'Ô Allah, rends toutes mes actions bonnes et fais-les uniquement pour Toi.',
+    wolof: 'Yaw Yàlla, defal sama jëf yépp ñu nekk yu baax te mu nekk lo xam ne yaw rekk a tax.',
+    category: 'invocation'
+  },
+  {
+--
+    french: 'Seigneur, ouvre-moi ma poitrine et facilite-moi ma tâche.',
+    wolof: 'Sama Boroom, ubbil ma sama dënn te yombalal ma sama mbir.',
+    category: 'invocation'
+  },
+  {
+--
+    french: 'Ô Allah, je Te demande la guidance, la piété, la chasteté et l’indépendance.',
+    wolof: 'Yaw Yàlla, maa ngi lay ñaan njub, ragal-Yàlla, selaal ak wërsëg.',
+    category: 'daily'
+  },
+  {
+--
+    french: 'Seigneur, accorde-nous le bien ici-bas et le bien dans l’au-delà, et protège-nous du feu.',
+    wolof: 'Sama Boroom, may nu yiw ci àddina ak yiw ci àllaaxira, te musal nu ci mbugalum safara.',
+    category: 'invocation'
+  },
+  {
+--
+    french: "Nous sommes au matin et la royauté appartient à Allah, Louange à Allah.",
+    wolof: "Yewwu nanu te nguur gi yépp Yàlla ko moom, cant yépp ñeel na Yàlla.",
+    category: 'daily'
+  },
+  {
+--
+    french: "Au nom d'Allah, tel qu'en compagnie de Son Nom rien ne peut nuire sur terre ni au ciel.",
+    wolof: "Ci turu Yàlla mi nga xam ne ludul mbir ci kaw suuf walla ci asamaan munu la lor ci ànd ak turam.",
+    category: 'protection'
+  },
+  {
+--
+    french: "En Ton nom, ô Allah, je meurs et je vis.",
+    wolof: "Ci sa tur yaw Yàlla, laay dee te ci sa tur laay dund.",
+    category: 'daily'
+  },
+  {
+--
+    french: "Je demande pardon à Allah (3 fois). Ô Allah ! Tu es la Paix et la paix vient de Toi. Béni sois-Tu, ô Détenteur de la Majesté et de la Générosité.",
+    wolof: "Maa ngiy jéggalu Yàlla (3 yoon). Yaw Yàlla, yaay jàmm te ci yaw la jàmm di jóge. Barkeel nga, yaw mi moom màggal gi ak teddnga gi.",
+    category: 'invocation'
+  },
+  {
+--
+    french: "Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par Lui-même...",
+    wolof: "Yàlla ! Amul leneen luñuy jaamu ludul Moom, miy dund tey sax-dàqq...",
+    category: 'protection'
+  },
+  {
+--
+    french: "Seigneur ! Fais-leur, à tous deux, miséricorde comme ils m'ont élevé tout petit.",
+    wolof: "Sama Boroom ! Yërëm leen ñaar ñépp, ni nu ma yaroowe woon ma nekk xale.",
+    category: 'invocation'
+  },
+  {
+--
+    french: "Ô Allah, je Te demande une science utile, une subsistance licite et une œuvre agréée.",
+    wolof: "Yaw Yàlla, maa ngi lay ñaan xam-xam bu njariñ, wërsëg wu sell ak jëf ju nu nangou.",
+    category: 'invocation'
+  },
+  {
+--
+    french: "Gloire à Allah (33 fois), Louange à Allah (33 fois), Allah est le plus Grand (33 fois).",
+    wolof: "Sell na Yàlla (33), Cant ñeel na Yàlla (33), Yàlla a gëna màgg (33).",
+    category: 'invocation'
+  },
+  {
+--
+    french: "Au nom d'Allah nous entrons, au nom d'Allah nous sortons, et en notre Seigneur nous plaçons notre confiance.",
+    wolof: "Ci turu Yàlla lanu dugg, ci turu Yàlla lanu guenn, te ci sunu Boroom lanu wéeru.",
+    category: 'lieux'
+  },
+  {
+--
+    french: "Au nom d'Allah, je place ma confiance en Allah. Il n'y a de force ni de puissance qu'en Allah.",
+    wolof: "Ci turu Yàlla, wéeru naa ci Yàlla. Amul kàttan ak doole ludul ci Yàlla.",
+    category: 'lieux'
+  },
+  {
+--
+    french: "Ô Allah, je cherche refuge auprès de Toi contre les démons mâles et femelles.",
+    wolof: "Yaw Yàlla, maa ngi daw làqu ci yaw, di tàccu seytane yu góor ak yu jigéen yi.",
+    category: 'lieux'
+  },
+  {
+--
+    french: "Je Te demande pardon (Ô Allah).",
+    wolof: "Yàlla, maa ngi lay ñaan nga jéggal ma.",
+    category: 'lieux'
+  },
+  {
+--
+    french: "Ô Allah, ouvre-moi les portes de Ta miséricorde.",
+    wolof: "Yaw Yàlla, ubbil ma bunti sa yërmande.",
+    category: 'lieux'
+  },
+  {
+--
+    french: "Ô Allah, je Te demande de Ta grâce.",
+    wolof: "Yaw Yàlla, maa ngi lay ñaan ci sa ngënéel.",
+    category: 'lieux'
+  },
+  {
+--
+    french: "Il n'y a de divinité digne d'être adorée qu'Allah, Seul, sans associé. À Lui la royauté, à Lui la louange. Il donne la vie et donne la mort. Il est Vivant et ne meurt jamais. Le bien est dans Sa main et Il est Omnipotent.",
+    wolof: "Amul beneen Yàlla budul moom kese, amul kook bokkal. Moom moo moom nguur gi, moo moom cant gi, mooy dundal teyek rey, dund la buy dul dee. Aw yiw ci loxoom la nekk, te Moom ci kaw mbir mu nekk mën na ko.",
+    category: 'lieux'
+  },
+  {
+--
+    french: "Ô Allah, il n'y a de chose facile que ce que Tu rends facile, et si Tu le veux, Tu peux rendre la chose difficile facile.",
+    wolof: "Yaw Yàlla, amul luy yomb ludul loo def mu yomb, te yaw booy bëgge luy jafe def ko muy yomb.",
+    category: 'etudes'
+  },
+  {
+--
+    french: "Ô mon Seigneur, accroît mes connaissances !",
+    wolof: "Sama Boroom, yokkal ma xam-xam !",
+    category: 'etudes'
+  },
+  {
+--
+    french: "Seigneur, ouvre-moi ma poitrine, et facilite ma mission, et dénoue un nœud en ma langue, afin qu'ils comprennent mes paroles.",
+    wolof: "Sama Boroom, léralal ma sama dënn, tey yombalal ma sama mbir, te nga fekki lëng ko ci sama làmmiñ, ndax ñu mën a dégg sama wax.",
+    category: 'etudes'
+  },
+  {
+--
+    french: "Gloire à Celui qui a mis ceci à notre service alors que nous n'étions pas capables de le dominer. Et c'est vers notre Seigneur que nous retournerons.",
+    wolof: "Ndamm yal nay ñeel kiy dogal lii ci sunu loxo, te ñun munuñuko woon, te ci sunu Boroom lañuy dellu.",
+    category: 'transport'
+  },
+  {
+--
+    wolof: "Jëf yi ci yéene lañuy wéet, te nit ku nekk la mu yéene rekk lay am.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ñi gën a mat ngëm ci jullit ñi, ñoo di ñi gën a rafet jikkk.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ree ci kanamu sa mbokk sadax la.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Kuy gëm Yallah ak bésub mujj ba, na wax lu baax mba mu noppi.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Set (lab) dafa set wecc ci ngëm.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ku yërmuwul (ñàkk yërmande), duñu ko yërëm.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Diine mooy kàddu gu rafet (walla laabiire).",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Kenn ci yeen dëggalul ngëmam, li feek bëggul ngir mbokkam li mu bëgg ngir boppam.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Dëng-kàddu leen ci dëgg, ndax dëgg dafay jëme ci mbàax (sell).",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ku am doole du kiy daan nit ñi ci bëre, waaye ku am doole mooy kiy téye boppam bu meré.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Àjjana mi ngi ci ron tanki ndey yi.",
+    reporter: "Rapporté par Ibn Majah et An-Nasa'i",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Sadax du wàññi alal mukk.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Wut xam-xam farata la ci lu jullit bu nekk.",
+    reporter: "Rapporté par Ibn Majah",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Doom Aadama yépp ay bàkkaarkat lañu, waaye ñi gën ci bàkkaarkat yi, ñoo di ñiy tuub.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ci baaxug jullitug nit, mooy mu bàyyi li ko yeewul.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Rafet-jikko du nekk ci lenn ludul daf koy taaral.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Yàlla mi ngi dimbali jaam bi, la feek jaam bi mi ngi dimbali mbokkam.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ku yewwu jàmm ci seen biir, am wërgiyaram... mel na ni ñu jox ko àddina si yépp.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Bul xeeb lenn ci mbàax (sell).",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Julli, leer la.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Yéen ñi gën a baax ci seen dëkkandoo, ñoo di ñi gën ci Yàlla.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Kersa, cér la ci mbirum ngëm.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ñaan, mooy jaamu Yàlla dëgg-dëgg.",
+    reporter: "Rapporté par Abou Daoud",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Tasaare leen nuyyoo ba (As-Salam) ci seen biir.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ku wàññi boppam ngir Yàlla, Yàlla dina ko yékkatí.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Wut woyof ci sa dund ak sa dee, dund gu baax dees na lako may.",
+    reporter: "Parole de Abou Bakr As-Siddiq",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Xeytamaale leen seen jëfi bopp, balaa ñu leen di xeytamaale ëllëg.",
+    reporter: "Parole de 'Umar ibn Al-Khattab",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Xalaat ci àddina leundeum la ci xol, waaye xalaat ci àllaaxira leer la ci xol.",
+    reporter: "Parole de 'Uthman ibn 'Affan",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Pajug nit ku nekk ci li mu mën a def lu baax la nekk.",
+    reporter: "Parole de 'Ali ibn Abi Talib",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Kóolute mooy ngëm gi yépp, lëj-lëj amut ci.",
+    reporter: "Parole de 'Abdullah ibn Mas'ud",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Melo jullit ñi ci seen mbëggeel ak seen yërmande ñom ci seen biir mel na ni benn yaram.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ki gën ci yeen mooy ki jàng Alxuraan te di ko jàngale.",
+    reporter: "Rapporté par Al-Bukhari",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Jëf yi ci yéene lañuy wéy.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Set (laab) mooy genn wàllu ngëm gi.",
+    reporter: "Rapporté par Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Sa ree ci kanamu sa mbokk, sadax (sarax) la.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Ku gëm Yàlla ak Bis bu mujj ba, n'a wax lu baax mbaa mu noppi.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Yàlla na Yàlla yërëm nit ku woyof ci njaay mi, ci njënd mi ak ci laajam.",
+    reporter: "Rapporté par Al-Bukhari",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Kàttan du ci daan nit ñi ci bëre, ku am kàttan dëgg mooy ki mën a téye boppam bu meré.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Bul kàddu (bul mer).",
+    reporter: "Rapporté par Al-Bukhari",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Yombal-leen li ngeen di def te bu-leen ko xat-xatal, bégal-leen nit ñi te bu-leen leen dàq.",
+    reporter: "Rapporté par Al-Bukhari et Muslim",
+    category: 'hadith'
+  },
+  {
+--
+    wolof: "Jullit ñi gën a mat ci ngëm ñoo gën a rafet jikko.",
+    reporter: "Rapporté par At-Tirmidhi",
+    category: 'hadith'
+  }
+];
